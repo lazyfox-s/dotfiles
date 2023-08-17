@@ -1,0 +1,7 @@
+brew "git-delta"
+brew "lazygit"
+brew "neovim"
+brew "ranger"
+brew "fish"
+brew "starship"
+brew "macchina"
