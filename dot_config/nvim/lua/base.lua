@@ -34,6 +34,7 @@ vim.o.termguicolors = true
 
 -- tab line / status line
 vim.o.laststatus = 3
+vim.o.cmdheight = 2
 vim.o.showtabline = 2
 
 
