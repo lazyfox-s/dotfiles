@@ -1,0 +1,228 @@
+format = """
+$character\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$fill\
+$shell\
+$shlvl\
+$memory_usage\
+$time\
+$cmd_duration\
+$line_break\
+[ ](#f2f4f8)\
+"""
+
+palette = 'carbonfox'
+add_newline = true
+
+[palettes.carbonfox]
+bg1  = '#161616'
+fg1  = '#f2f4f8'
+sel0 = '#2a2a2a'
+sel1 = '#525253'
+
+black   = "#282828"
+red     = "#EE5396"
+green   = "#25be6a"
+yellow  = "#08BDBA"
+blue    = "#78A9FF"
+magenta = "#BE95FF"
+cyan    = "#33B1FF"
+white   = "#dfdfe0"
+orange  = "#3DDBD9"
+pink    = "#FF7EB6"
+
+
+# You can also replace your username with a neat symbol like  to save some space
+[username]
+show_always = true
+style_user = 'fg:fg1 bg:sel1'
+style_root = 'fg:red bg:sel1'
+format = '[ $user]($style)'
+
+[directory]
+truncation_length = 3
+home_symbol = '~'
+format = '[ $path ]($style)[$read_only]($read_only_style)[](fg:sel0)'
+repo_root_format = '[ $before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path ]($style)[$read_only]($read_only_style)'
+use_os_path_sep = false
+style = 'fg:bold fg1 bg:sel0'
+read_only = ' '
+read_only_style = 'fg:red bg:sel0'
+truncate_to_repo = true
+fish_style_pwd_dir_length = 1
+before_repo_root_style = 'fg:fg1 bg:sel0'
+repo_root_style = 'fg:bold fg1 bg:sel0'
+use_logical_path = true
+# Here is how you can shorten some long paths by text replacement
+# similar to mapped_locations in Oh My Posh:
+# [directory.substitutions]
+# "Documents" = "Documents"
+# "Downloads" = "Downloads  "
+# "Music" = "Music  "
+# "Pictures" = "Pictures  "
+# Keep in mind that the order matters. For example:
+# "Important Documents" = "  "
+# will not be replaced, because "Documents" was already substituted before.
+# So either put "Important Documents" before "Documents" or use the substituted version:
+# "Important  " = "  "
+
+[localip]
+disabled = false
+ssh_only = false
+
+[docker_context]
+symbol = " "
+
+[fossil_branch]
+symbol = " "
+
+[git_branch]
+symbol = ""
+format = '[ $symbol $branch(:$remote_branch) ]($style)'
+style = 'fg:fg1 bg:bg1'
+
+[git_commit]
+style = 'fg:fg1 bg:bg1'
+only_detached = true
+tag_disabled = false
+
+[git_state]
+style = 'fg:yellow bg:bg1'
+
+[git_metrics]
+added_style = 'fg:green bg:bg1'
+deleted_style = 'fg:red bg:bg1'
+disabled = false
+
+[git_status]
+format = '[ $all_status$ahead_behind ]($style)[](fg:bg1)'
+style = 'fg:red bg:bg1'
+conflicted = ' '
+modified = ' '
+staged = ' '
+stashed = ' '
+untracked = ' '
+
+ahead = ''
+behind = ''
+diverged = ''
+
+[hg_branch]
+symbol = " "
+
+[hostname]
+ssh_symbol = " "
+ssh_only = false
+style = 'fg:fg1 bg:sel1'
+format = '[@$ssh_symbol$hostname ]($style)'
+
+[shell]
+disabled = false
+format = '[](fg:sel0)[  $indicator ]($style)'
+style = 'fg:fg1 bg:sel0'
+
+bash_indicator = 'bash'
+fish_indicator = 'fish'
+powershell_indicator = 'posh'
+elvish_indicator = 'elvish'
+tcsh_indicator = 'tcsh'
+xonsh_indicator = 'xonsh'
+
+[shlvl]
+disabled = false
+format = '[\($symbol$shlvl\)]($style)'
+style = 'fg:fg1 bg:sel0'
+threshold = 2
+symbol = 'LV'
+
+[memory_usage]
+symbol = " "
+threshold = 0
+format = '[ $symbol$ram_pct ]($style)'
+style = 'fg:fg1 bg:sel0'
+disabled = false
+
+[nix_shell]
+symbol = " "
+
+[fill]
+symbol = ' '
+style = 'bg:none'
+#style = 'bg:bg1'
+
+[os]
+disabled = false
+format = '[ $symbol]($style)'
+style = 'fg:fg1 bg:sel1'
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Windows = "󰍲 "
+
+[time]
+disabled = false
+format = '[  $time ]($style)'
+style = 'fg:fg1 bg:sel0'
+time_format = "%R" # Hour:Minute Format
+
+[cmd_duration]
+min_time = 500
+show_milliseconds = true
+format = '[\($duration\)]($style)'
+style = 'fg:yellow bg:sel0'
+
+# Inserts a blank line between shell prompts
+# Replace the "❯" symbol in the prompt with "➜" [character] # The name of the module we are configuring is "character"
+[character]
+format = "$symbol"
+success_symbol = "[ INSERT ](fg:black bg:green)"
+error_symbol = "[  ](fg:red bg:green)[ INSERT ](fg:black bg:green)"
+vimcmd_symbol = "[ NORMAL ](fg:black bg:blue)"
+vimcmd_replace_one_symbol = "[ REPLACE ](fg:black bg:pink)"
+vimcmd_replace_symbol = "[ REPLACE ](fg:black bg:pink)"
+vimcmd_visual_symbol = "[ VISUAL ](fg:black bg:purple)"
+
+# Disable the package module, hiding it from the prompt completely
+[package]
+disabled = true
