@@ -1,0 +1,3 @@
+theme = 'mytheme'
+
+show = ['Host', 'Machine', 'Distribution', 'Packages', 'Uptime']
