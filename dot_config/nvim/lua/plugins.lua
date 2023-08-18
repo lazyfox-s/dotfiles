@@ -27,7 +27,8 @@ return {
     -- Motion
     {
         'phaazon/hop.nvim',
-        config = require('config/hop')
+        keys = require('config.hop').keys,
+        config = require('config.hop').config
     },
     {
         'psliwka/vim-smoothie',
