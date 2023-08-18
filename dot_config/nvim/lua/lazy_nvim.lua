@@ -18,5 +18,10 @@ require('lazy').setup(plugins, {
     },
     readme = {
         enabled = true,
+    },
+    performance = {
+        cache = {
+            enabled = true
+        }
     }
 })
