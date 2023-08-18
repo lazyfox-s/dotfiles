@@ -76,8 +76,10 @@ db.setup {
     }
 }
 
+vim.api.nvim_create_augroup('dashboard_init', {})
 vim.api.nvim_create_autocmd('FileType', {
     pattern = 'dashboard',
+    group = 'dashboard_init',
     callback = set_ansi_color
 })
 
