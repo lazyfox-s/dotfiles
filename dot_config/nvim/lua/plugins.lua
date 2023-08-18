@@ -37,14 +37,14 @@ return {
     -- Text Object
     {
         'sgur/vim-textobj-parameter',
-        lazy = false,
+        keys = {{'aa', mode = 'o'}, {'ia', mode = 'o'}},
         dependencies = {
             'kana/vim-textobj-user'
         }
     },
     {
         'kana/vim-textobj-entire',
-        lazy = false,
+        keys = {{'ae', mode = 'o'}, {'ie', mode = 'o'}},
         dependencies = {
             'kana/vim-textobj-user'
         }
