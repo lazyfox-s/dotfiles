@@ -114,8 +114,8 @@ return {
         config = require('plugins.treesitter').config,
         dependencies = {
             'p00f/nvim-ts-rainbow',
-            'folke/todo-comments.nvim',
-            'norcalli/nvim-colorizer.lua'
+            {'folke/todo-comments.nvim', opts = {}},
+            {'norcalli/nvim-colorizer.lua', opts = {}}
         }
     },
     -- Completion
