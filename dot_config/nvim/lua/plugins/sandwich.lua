@@ -1,5 +1,7 @@
 local M = {}
 
+M.keys = {'ys', 'yss', 'yS', 'ds', 'dss', 'cs', 'css', {'S', mode = 'x'}}
+
 M.init = function()
     vim.g.sandwich_no_default_key_mappings = 1
     vim.g.operator_sandwich_no_default_key_mappings = 1
