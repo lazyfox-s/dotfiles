@@ -105,5 +105,18 @@ return {
             'lambdalisue/nerdfont.vim',
             'lambdalisue/glyph-palette.vim'
         }
+    },
+    -- syntax highlighting
+    {
+        'nvim-treesitter/nvim-treesitter',
+        build = ':TSUpdate',
+        event = {'BufReadPost', 'BufNewFile'},
+        cmd = 'TSUpdateSync',
+        config = require('plugins.treesitter').config,
+        dependencies = {
+            'p00f/nvim-ts-rainbow',
+            'folke/todo-comments.nvim',
+            'norcalli/nvim-colorizer.lua'
+        }
     }
 }
