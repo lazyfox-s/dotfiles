@@ -77,5 +77,33 @@ return {
         'mvllow/modes.nvim',
         event = 'ModeChanged',
         config = require('plugins.modes')
+    },
+    -- Finder
+    {
+        'nvim-telescope/telescope.nvim',
+        keys = require('plugins.telescope').keys,
+        config = require('plugins.telescope').config,
+        cmd = 'Telescope',
+        dependencies = {
+            'kkharji/sqlite.lua',
+            'nvim-lua/plenary.nvim',
+            {
+                'prochri/telescope-all-recent.nvim',
+                config = require('plugins.telescope-all-recent').config
+            },
+        }
+    },
+    {
+        'lambdalisue/fern.vim',
+        cmd = 'Fern',
+        keys = require('plugins.fern').keys,
+        init = require('plugins.fern').init,
+        dependencies = {
+            'lambdalisue/fern-hijack.vim',
+            'lambdalisue/fern-renderer-nerdfont.vim',
+            'lambdalisue/fern-git-status.vim',
+            'lambdalisue/nerdfont.vim',
+            'lambdalisue/glyph-palette.vim'
+        }
     }
 }
