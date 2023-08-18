@@ -1,4 +1,3 @@
-
 return {
     -- Apparence
     {   -- colorscheme
@@ -118,5 +117,32 @@ return {
             'folke/todo-comments.nvim',
             'norcalli/nvim-colorizer.lua'
         }
+    },
+    -- Completion
+    { --- lsp
+        'williamboman/mason.nvim',
+        event = {'BufReadPre', 'BufNewFile'},
+        config = require('plugins.mason').config,
+        dependencies = {
+            'folke/neodev.nvim',
+            'neovim/nvim-lspconfig',
+            'williamboman/mason-lspconfig.nvim'
+        }
+    },
+    { --- auto completion with snippet
+        'hrsh7th/nvim-cmp',
+        event = {'InsertEnter', 'CmdlineEnter'},
+        config = require('plugins.nvim-cmp').config,
+        dependencies = {
+            'neovim/nvim-lspconfig',
+            'hrsh7th/cmp-nvim-lsp',
+            'hrsh7th/cmp-buffer',
+            'hrsh7th/cmp-path',
+            'hrsh7th/cmp-cmdline',
+            'hrsh7th/cmp-vsnip',
+            'hrsh7th/vim-vsnip',
+            'onsails/lspkind.nvim',
+            'hrsh7th/cmp-nvim-lsp-signature-help'
+        },
     }
 }
