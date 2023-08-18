@@ -84,3 +84,6 @@ end)
 
 -- textobj parameter
 vim.g.vim_textobj_parameter_mapping = 'a'
+
+-- Operator Replace
+vim.keymap.set({'n', 'x', 'o'}, 'R', '<Plug>(operator-replace)', {remap = true})

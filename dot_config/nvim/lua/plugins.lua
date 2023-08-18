@@ -48,5 +48,17 @@ return {
         dependencies = {
             'kana/vim-textobj-user'
         }
+    },
+    -- Operator
+    {
+        'kana/vim-operator-replace',
+        keys = {{'<Plug>(operator-replace)', mode = {'n', 'x', 'o'}}},
+        dependencies = { 'kana/vim-operator-user' }
+    },
+    {
+        'machakann/vim-sandwich',
+        keys = {'ys', 'yss', 'yS', 'ds', 'dss', 'cs', 'css', {'S', mode = 'x'}},
+        init = require('config/sandwich').init,
+        config = require('config/sandwich').config
     }
 }
