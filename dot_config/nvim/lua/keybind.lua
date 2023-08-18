@@ -92,3 +92,6 @@ end
 smoothie_keymap_setAll(
     {'<C-D>', '<C-U>', '<C-F>', '<S-Down>', '<PageDown>', '<C-B>', '<S-Up>', '<PageUp>', 'gg', 'G'})
 
+
+-- textobj parameter
+vim.g.vim_textobj_parameter_mapping = 'a'
