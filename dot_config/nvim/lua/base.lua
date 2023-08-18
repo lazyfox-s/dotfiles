@@ -32,6 +32,12 @@ vim.g.tex_conceal = 'adgmb'
 vim.o.background = 'dark'
 vim.o.termguicolors = true
 
+vim.api.nvim_create_augroup('highlight_yank', {})
+vim.api.nvim_create_autocmd('TextYankPost', {
+    pattern = {'*'},
+    callback = function() vim.highlight.on_yank{higroup='DiffChange', timeout=300} end
+})
+
 -- tab line / status line
 vim.o.laststatus = 3
 vim.o.cmdheight = 2

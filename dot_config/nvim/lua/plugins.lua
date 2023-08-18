@@ -60,5 +60,35 @@ return {
         keys = {'ys', 'yss', 'yS', 'ds', 'dss', 'cs', 'css', {'S', mode = 'x'}},
         init = require('config/sandwich').init,
         config = require('config/sandwich').config
+    },
+    {
+        'machakann/vim-highlightedundo',
+        keys = {
+            '<Plug>(highlightedundo-undo)', '<Plug>(highlightedundo-Undo)',
+            '<Plug>(highlightedundo-gplus)', '<Plug>(highlightedundo-gminus)',
+            '<Plug>(highlightedundo-redo)'
+        },
+        init = require('config/highlightedundo')
+    },
+    {
+        'obcat/vim-highlightedput',
+        keys = {
+            {'<Plug>(highlightedput-p)', mode = {'n', 'x'}},
+            {'<Plug>(highlightedput-P)', mode = {'n', 'x'}},
+            {'<Plug>(highlightedput-gp)', mode = {'n', 'x'}},
+            {'<Plug>(highlightedput-gP)', mode = {'n', 'x'}},
+            {'<Plug>(highlightedput-[P)', mode = {'n', 'x'}},
+            {'<Plug>(highlightedput-[p)', mode = {'n', 'x'}},
+            {'<Plug>(highlightedput-]p)', mode = {'n', 'x'}},
+            {'<Plug>(highlightedput-]P)', mode = {'n', 'x'}},
+            {'<Plug>(highlightedput-zp)', mode = {'n', 'x'}},
+            {'<Plug>(highlightedput-zP)', mode = {'n', 'x'}},
+        },
+        init = require('config/highlightedput')
+    },
+    {
+        'mvllow/modes.nvim',
+        event = 'ModeChanged',
+        config = require('config/modes')
     }
 }
