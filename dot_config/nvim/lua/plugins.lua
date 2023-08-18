@@ -32,7 +32,7 @@ return {
     {
         'psliwka/vim-smoothie',
         keys = {'<C-D>', '<C-U>', '<C-F>', '<S-Down>', '<PageDown>', '<C-B>', '<S-Up>', '<PageUp>', 'gg', 'G'},
-        config = require('config/vim_smoothie')
+        init = require('config/vim_smoothie')
     },
     -- Text Object
     {

@@ -81,17 +81,6 @@ hop_keymap_set('<C-k>', function(hop, directions)
 end)
 
 
--- smoothie
-local smoothie_keymap_setAll = function(keys)
-    for idx = 1, #keys do
-        local key = keys[idx]
-        vim.keymap.set('n', key, '<cmd>call smoothie#do("'..key..'")<CR>')
-    end
-end
-
-smoothie_keymap_setAll(
-    {'<C-D>', '<C-U>', '<C-F>', '<S-Down>', '<PageDown>', '<C-B>', '<S-Up>', '<PageUp>', 'gg', 'G'})
-
 
 -- textobj parameter
 vim.g.vim_textobj_parameter_mapping = 'a'
