@@ -1,5 +1,5 @@
 return {
-    -- Visual
+    -- Apparence
     {   -- colorscheme
         'EdenEast/nightfox.nvim',
         lazy = false,
@@ -23,5 +23,15 @@ return {
         'glepnir/dashboard-nvim',
         event = 'VimEnter',
         config = require('config/dashboard')
+    },
+    -- Motion
+    {
+        'phaazon/hop.nvim',
+        config = require('config/hop')
+    },
+    {
+        'psliwka/vim-smoothie',
+        keys = {'<C-D>', '<C-U>', '<C-F>', '<S-Down>', '<PageDown>', '<C-B>', '<S-Up>', '<PageUp>', 'gg', 'G'},
+        config = require('config/vim_smoothie')
     }
 }

@@ -13,6 +13,9 @@ vim.opt.rtp:prepend(lazypath)
 
 local plugins = require('plugins')
 require('lazy').setup(plugins, {
+    defaults = {
+        lazy = true
+    },
     readme = {
         enabled = true,
     }

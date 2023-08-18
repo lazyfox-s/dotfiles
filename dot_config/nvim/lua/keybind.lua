@@ -37,3 +37,58 @@ vim.keymap.set('n', 'bd', function ()
     vim.cmd.bprevious()
     vim.api.nvim_buf_delete(buf, {})
 end)
+
+-----------------------------------------------------------------------------------------
+-- Plugins
+
+-- hop
+
+local hop_keymap_set = function(key, callback)
+    local func = function()
+        local hop = require('hop')
+        local directions = require('hop.hint').HintDirection
+        callback(hop, directions)
+    end
+    vim.keymap.set('', key, func, {remap = true})
+end
+
+hop_keymap_set('f', function(hop, directions)
+    hop.hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = true })
+end)
+
+hop_keymap_set('F', function(hop, directions)
+    hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true })
+end)
+
+hop_keymap_set('t', function(hop, directions)
+    hop.hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = true, hint_offset = -1 })
+end)
+
+hop_keymap_set('T', function(hop, directions)
+    hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true, hint_offset = -1 })
+end)
+
+hop_keymap_set('s', function(hop, _)
+    hop.hint_char2({current_line_only = false, multi_windows = true})
+end)
+
+hop_keymap_set('<C-j>', function(hop, directions)
+    hop.hint_vertical({ direction = directions.AFTER_CURSOR, current_line_only = false})
+end)
+
+hop_keymap_set('<C-k>', function(hop, directions)
+    hop.hint_vertical({ direction = directions.BEFORE_CURSOR, current_line_only = false})
+end)
+
+
+-- smoothie
+local smoothie_keymap_setAll = function(keys)
+    for idx = 1, #keys do
+        local key = keys[idx]
+        vim.keymap.set('n', key, '<cmd>call smoothie#do("'..key..'")<CR>')
+    end
+end
+
+smoothie_keymap_setAll(
+    {'<C-D>', '<C-U>', '<C-F>', '<S-Down>', '<PageDown>', '<C-B>', '<S-Up>', '<PageUp>', 'gg', 'G'})
+
