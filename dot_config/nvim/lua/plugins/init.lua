@@ -142,7 +142,17 @@ return {
             'hrsh7th/cmp-vsnip',
             'hrsh7th/vim-vsnip',
             'onsails/lspkind.nvim',
+            {'rinx/cmp-skkeleton', dependencies = {'vim-skk/skkeleton'}},
             'hrsh7th/cmp-nvim-lsp-signature-help'
         },
+    },
+    -- Misc
+    {
+        'vim-skk/skkeleton',
+        keys = require('plugins.skkeleton').keys,
+        init = require('plugins.skkeleton').init,
+        dependencies = {
+            'vim-denops/denops.vim',
+        }
     }
 }

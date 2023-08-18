@@ -1,0 +1,17 @@
+{{ if eq .chezmoi.os "windows" -}}
+@exit
+{{ end -}}
+#!/usr/bin/env bash
+
+TMP=$(mktemp -d)
+cd $TMP
+curl -LJO https://skk-dev.github.io/dict/SKK-JISYO.L.gz
+curl -LJO https://skk-dev.github.io/dict/SKK-JISYO.jinmei.gz
+curl -LJO https://skk-dev.github.io/dict/SKK-JISYO.geo.gz
+curl -LJO https://skk-dev.github.io/dict/SKK-JISYO.station.gz
+curl -LJO https://skk-dev.github.io/dict/SKK-JISYO.propernoun.gz
+
+gunzip SKK-JISYO.*.gz
+
+mkdir -p ~/.local/share/skk
+mv SKK-JISYO.* ~/.local/share/skk/
