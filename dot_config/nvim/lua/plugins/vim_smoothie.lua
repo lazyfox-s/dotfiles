@@ -1,6 +1,6 @@
 local M = {}
 
-M.keys = {'<C-D>', '<C-U>', '<C-F>', '<S-Down>', '<PageDown>', '<C-B>', '<S-Up>', '<PageUp>', 'gg', 'G'}
+M.keys = {'<C-D>', '<C-U>', '<C-F>', '<S-Down>', '<PageDown>', '<S-Up>', '<PageUp>', 'gg', 'G'}
 
 M.init = function()
 vim.g.smoothie_enables = true

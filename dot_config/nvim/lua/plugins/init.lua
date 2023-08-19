@@ -17,12 +17,38 @@ return {
     {
         'akinsho/bufferline.nvim',
         lazy = false,
-        config = require('plugins.bufferline')
+        config = require('plugins.bufferline'),
+        dependencies = { 'nvim-tree/nvim-web-devicons' }
     },
     {
         'glepnir/dashboard-nvim',
         event = 'VimEnter',
         config = require('plugins.dashboard')
+    },
+    {
+        'petertriho/nvim-scrollbar',
+        event = 'CmdlineEnter',
+        config = require('plugins.scrollbar').config,
+        dependencies = {
+            'kevinhwang91/nvim-hlslens',
+            'lewis6991/gitsigns.nvim',
+        }
+    },
+    {
+        'kevinhwang91/nvim-hlslens',
+        config = require('plugins.hlslens').config,
+        dependencies = { 'haya14busa/vim-asterisk' }
+    },
+    {
+        'sidebar-nvim/sidebar.nvim',
+        -- keys = require('plugins.sidebar').keys,
+        init = require('plugins.sidebar').init,
+        config = require('plugins.sidebar').config
+    },
+    {
+        'j-hui/fidget.nvim',
+        tag = 'legacy',
+        opts = {window = {blend = 0}}
     },
     -- Motion
     {
@@ -115,7 +141,8 @@ return {
         dependencies = {
             'p00f/nvim-ts-rainbow',
             {'folke/todo-comments.nvim', opts = {}},
-            {'norcalli/nvim-colorizer.lua', opts = {}}
+            {'norcalli/nvim-colorizer.lua', opts = {}},
+            {'haringsrob/nvim_context_vt', opts = {enabled = true, prefix = ''}}
         }
     },
     -- Completion
@@ -128,6 +155,10 @@ return {
             'neovim/nvim-lspconfig',
             'williamboman/mason-lspconfig.nvim'
         }
+    },
+    {
+        'neovim/nvim-lspconfig',
+        dependencies = {'j-hui/fidget.nvim'}
     },
     { --- auto completion with snippet
         'hrsh7th/nvim-cmp',
