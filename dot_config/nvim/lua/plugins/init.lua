@@ -146,13 +146,43 @@ return {
             'hrsh7th/cmp-nvim-lsp-signature-help'
         },
     },
+    -- Source Control
+    {
+        'lewis6991/gitsigns.nvim',
+        event = {'BufReadPost', 'BufNewFile'},
+        config = require('plugins.gitsigns').config
+    },
+    {
+        'hotwatermorning/auto-git-diff',
+        ft = 'gitrebase'
+    },
+    {
+        'rhysd/committia.vim',
+        event = 'BufReadPre COMMIT_EDITMSG',
+        init = function() vim.g.committia_open_only_vim_starting = false end
+    },
+    {
+        'lambdalisue/gin.vim',
+        cmd = 'Gin',
+        init = function() vim.g.gin_proxy_apply_without_confirm = true end,
+        config = require('plugins.denops').util.discover_plugin,
+        dependencies = {
+            'vim-denops/denops.vim'
+        }
+    },
     -- Misc
     {
         'vim-skk/skkeleton',
         keys = require('plugins.skkeleton').keys,
         init = require('plugins.skkeleton').init,
+        config = require('plugins.denops').util.discover_plugin,
         dependencies = {
             'vim-denops/denops.vim',
         }
+    },
+    {
+        'akinsho/toggleterm.nvim',
+        cmd = require('plugins.toggleterm').cmd,
+        config = require('plugins.toggleterm').config
     }
 }
