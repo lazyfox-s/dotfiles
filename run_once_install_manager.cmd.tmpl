@@ -14,4 +14,4 @@ else
 fi
 
 cd {{.chezmoi.sourceDir}}
-type brew > /dev/null 2>&1 && brew bundle
+type brew > /dev/null 2>&1 && brew bundle --no-lock

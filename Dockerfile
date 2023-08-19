@@ -26,6 +26,11 @@ RUN echo "Defaults visiblepw" >> /etc/sudoers
 RUN echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 RUN echo "Set disable_coredump false" >> /etc/sudo.conf
 
+RUN mkdir -p "/home/${USERNAME}/.local/bin"
+RUN mkdir -p "/home/${USERNAME}/.local/share"
+
+RUN chown -R ${USERNAME}:${USERNAME} "/home/${USERNAME}/.local"
+
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
 
