@@ -1,0 +1,38 @@
+[user]
+    name = {{ .name }}
+    email = {{ .email }}
+[core]
+	editor = nvim
+	autocrlf = input
+    pager = delta
+[interactive]
+    diffFilter = delta --coloer-only
+[alias]
+	slog = ! git log --oneline --color -10 && git rev-parse HEAD~10 > /dev/null 2>&1 && echo "+"$(git rev-list --count HEAD~10)" commits"
+	glog = log --graph --color --oneline
+    pushf = push --force-with-lease
+[color]
+	ui = true
+[merge]
+	tool = nvimdiff
+	ff = false
+[mergetool "meld"]
+	cmd = meld $LOCAL $BASE $REMOTE --auto-merge --output $MERGED
+
+[mergetool "nvimdiff"]
+    cmd = "nvim -d -c '3wincmd w | wincmd J' $LOCAL $REMOTE $MERGED"
+
+[fetch]
+	prune = true
+[push]
+	default = simple
+[pull]
+	ff = only
+[init]
+	defaultBranch = main
+[delta]
+    navigate = true
+    line-numbers = true
+    side-by-side = true
+[diff]
+    colorMoved = default
