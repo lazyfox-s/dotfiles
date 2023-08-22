@@ -52,9 +52,20 @@ return {
     },
     -- Motion
     {
-        'phaazon/hop.nvim',
-        keys = require('plugins.hop').keys,
-        config = require('plugins.hop').config
+        'unblevable/quick-scope',
+        keys = require('plugins.quick-scope').keys,
+        init = require('plugins.quick-scope').init,
+        config = require('plugins.quick-scope').config
+    },
+    {
+        'ggandor/leap.nvim',
+        keys = require('plugins.leap').keys,
+        config = require('plugins.leap').config,
+        dependencies = { 'tpope/vim-repeat' }
+    },
+    {
+        'haya14busa/vim-edgemotion',
+        keys = require('plugins.edgemotion').keys
     },
     {
         'psliwka/vim-smoothie',

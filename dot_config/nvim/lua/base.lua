@@ -7,6 +7,7 @@ vim.o.ambiwidth = 'single'
 
 -- Visual
 vim.o.number = true
+vim.o.relativenumber = true
 vim.o.visualbell = true
 vim.o.errorbells = false
 vim.o.cursorline = true
