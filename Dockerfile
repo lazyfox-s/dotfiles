@@ -34,3 +34,17 @@ RUN chown -R ${USERNAME}:${USERNAME} "/home/${USERNAME}/.local"
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
 
+RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+ENV PATH=$PATH:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin/
+ENV MANPATH="$MANPATH:/home/linuxbrew/.linuxbrew/share/man"
+ENV INFOPATH="$INFOPATH:/home/linuxbrew/.linuxbrew/share/info"
+ENV HOMEBREW_NO_AUTO_UPDATE=1
+
+COPY Brewfile /home/${USERNAME}
+RUN brew bundle
+
+RUN sh -c "$(curl -fsLS get.chezmoi.io/lb)"
+ENV PATH=$PATH:/home/${USERNAME}/.local/bin
+
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]
