@@ -201,7 +201,7 @@ return {
     {
         'rhysd/committia.vim',
         event = 'BufReadPre COMMIT_EDITMSG',
-        init = function() vim.g.committia_open_only_vim_starting = false end
+        init = require('plugins.committia').init
     },
     {
         'lambdalisue/gin.vim',
