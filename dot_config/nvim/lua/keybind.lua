@@ -29,12 +29,12 @@ vim.keymap.set('t', '<ESC>', '<C-\\><C-n>')
 
 
 -- buffer
-vim.keymap.set('n', 'bn', vim.cmd.bnext)
-vim.keymap.set('n', 'bN', vim.cmd.bbprevious)
+-- vim.keymap.set('n', 'bn', vim.cmd.bnext)
+-- vim.keymap.set('n', 'bN', vim.cmd.bprevious)
 vim.keymap.set('n', 'bq', vim.cmd.bdelete)
-vim.keymap.set('n', 'bd', function ()
-    local buf = vim.api.nvim_get_current_buf()
-    vim.cmd.bprevious()
-    vim.api.nvim_buf_delete(buf, {})
-end)
+-- vim.keymap.set('n', 'bd', function ()
+--     local buf = vim.api.nvim_get_current_buf()
+--     vim.cmd.bprevious()
+--     vim.api.nvim_buf_delete(buf, {})
+-- end)
 

@@ -226,5 +226,9 @@ return {
         'akinsho/toggleterm.nvim',
         cmd = require('plugins.toggleterm').cmd,
         config = require('plugins.toggleterm').config
-    }
+    },
+    {
+        'famiu/bufdelete.nvim',
+        keys = {{'bd', '<cmd>Bdelete<CR>'}}
+    },
 }

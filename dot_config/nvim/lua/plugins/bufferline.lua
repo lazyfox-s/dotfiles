@@ -1,4 +1,23 @@
-local config = function ()
+local M = {}
+
+local function moveNextBuf()
+    local bline = require('bufferline')
+    local count = vim.v.count
+
+    if count == 0 then
+        vim.cmd.BufferLineCycleNext()
+        return
+    end
+
+    bline.go_to(count, true)
+end
+
+M.keys = {
+    { 'bn', moveNextBuf},
+    { 'bN', '<cmd>BufferLineCyclePrev<CR>' }
+}
+
+M.config = function ()
 
 require('bufferline').setup{
     options = {
@@ -160,4 +179,4 @@ require('bufferline').setup{
 
 end
 
-return config
+return M
