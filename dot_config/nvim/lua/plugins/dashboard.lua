@@ -59,7 +59,7 @@ db.setup {
             key = 's'},
             {icon = '  ',
             desc = 'Open Personal dotfiles                  ',
-            action = 'Telescope find_files prompt_title=dotfiles cwd=$HOME/dotfiles',
+            action = 'Telescope find_files prompt_title=dotfiles cwd=$HOME/.local/share/chezmoi',
             key = 'd'},
         },
         footer = {update_text},

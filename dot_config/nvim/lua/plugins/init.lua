@@ -17,7 +17,8 @@ return {
     {
         'akinsho/bufferline.nvim',
         lazy = false,
-        config = require('plugins.bufferline'),
+        keys = require('plugins.bufferline').keys,
+        config = require('plugins.bufferline').config,
         dependencies = { 'nvim-tree/nvim-web-devicons' }
     },
     {
@@ -106,6 +107,11 @@ return {
         init = require('plugins.highlightedundo').init
     },
     {
+        'tommcdo/vim-exchange',
+        keys = require('plugins.exchange').keys,
+        init = require('plugins.exchange').init
+    },
+    {
         'obcat/vim-highlightedput',
         keys = require('plugins.highlightedput').keys
     },
@@ -142,6 +148,12 @@ return {
             'lambdalisue/glyph-palette.vim'
         }
     },
+    {
+        'stevearc/oil.nvim',
+        cmd = 'Oil',
+        opts = {},
+        dependencies = { 'nvim-tree/nvim-web-devicons' }
+    },
     -- syntax highlighting
     {
         'nvim-treesitter/nvim-treesitter',
@@ -150,7 +162,7 @@ return {
         cmd = 'TSUpdateSync',
         config = require('plugins.treesitter').config,
         dependencies = {
-            'p00f/nvim-ts-rainbow',
+            'HiPhish/rainbow-delimiters.nvim',
             {'folke/todo-comments.nvim', opts = {}},
             {'norcalli/nvim-colorizer.lua', opts = {}},
             {'haringsrob/nvim_context_vt', opts = {enabled = true, prefix = ''}}
@@ -212,6 +224,12 @@ return {
             'vim-denops/denops.vim'
         }
     },
+    -- memo
+    {
+        'fuenor/qfixhowm',
+        keys = { 'g,' },
+        init = require('plugins.howm').init
+    },
     -- Misc
     {
         'vim-skk/skkeleton',
@@ -231,4 +249,22 @@ return {
         'famiu/bufdelete.nvim',
         keys = {{'bd', '<cmd>Bdelete<CR>'}}
     },
+    {
+        'rmagatti/auto-session',
+        event = {'BufReadPost', 'BufNewFile'},
+        opts = { auto_restore_enabled = false }
+    },
+    {
+        'anuvyklack/hydra.nvim',
+        keys = require('plugins.hydra').keys,
+        config = require('plugins.hydra').config,
+        dependencies = {
+            'akinsho/toggleterm.nvim',
+            --'sidebar-nvim/sidebar.nvim'
+        }
+    },
+    {
+        'vim-jp/vimdoc-ja',
+        event = 'CmdlineEnter',
+    }
 }
