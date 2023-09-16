@@ -46,5 +46,7 @@ RUN brew bundle
 RUN sh -c "$(curl -fsLS get.chezmoi.io/lb)"
 ENV PATH=$PATH:/home/${USERNAME}/.local/bin
 
+ENV TERM=xterm-256color
+
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
