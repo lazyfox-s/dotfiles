@@ -27,11 +27,19 @@ vim.keymap.set('n', '<SPACE>', 'za')
 -- <ESC> to normal mode in terminal
 vim.keymap.set('t', '<ESC>', '<C-\\><C-n>')
 
+-- Type q to close buffer in help
+vim.api.nvim_create_augroup('help_keymap', {})
+vim.api.nvim_create_autocmd('FileType', {
+    group = 'help_keymap',
+    pattern = 'help',
+    callback = function() vim.keymap.set('n', 'q', '<cmd>q<CR>', { buffer = true } ) end
+})
 
 -- buffer
 -- vim.keymap.set('n', 'bn', vim.cmd.bnext)
 -- vim.keymap.set('n', 'bN', vim.cmd.bprevious)
 vim.keymap.set('n', 'bq', vim.cmd.bdelete)
+vim.keymap.set('n', 'bb', '<C-^>')
 -- vim.keymap.set('n', 'bd', function ()
 --     local buf = vim.api.nvim_get_current_buf()
 --     vim.cmd.bprevious()

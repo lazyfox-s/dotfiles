@@ -12,6 +12,28 @@ vim.o.visualbell = true
 vim.o.errorbells = false
 vim.o.cursorline = true
 
+vim.api.nvim_create_augroup('toggle_relativenumber', {})
+vim.api.nvim_create_autocmd('InsertEnter', {
+    group = 'toggle_relativenumber',
+    pattern = '*',
+    callback = function() vim.wo.relativenumber = false end
+})
+vim.api.nvim_create_autocmd('InsertLeave', {
+    group = 'toggle_relativenumber',
+    pattern = '*',
+    callback = function() vim.wo.relativenumber = true end
+})
+vim.api.nvim_create_autocmd('BufEnter', {
+    group = 'toggle_relativenumber',
+    pattern = '*',
+    callback = function() vim.wo.relativenumber = true end
+})
+vim.api.nvim_create_autocmd('BufLeave', {
+    group = 'toggle_relativenumber',
+    pattern = '*',
+    callback = function() vim.wo.relativenumber = false end
+})
+
 --- indent
 vim.o.tabstop = 4
 vim.o.softtabstop = 4
