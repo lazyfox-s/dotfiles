@@ -2,6 +2,7 @@ set -g fish_ambiguous_width 1
 set -g fish_term24bit 1 # true color
 set -g ENHANCD_DISABLE_DOT 1
 set -g ENHANCD_DISABLE_HOME 1
+set -x EDITOR nvim
 
 fish_vi_key_bindings
 
