@@ -3,6 +3,8 @@ set -g fish_term24bit 1 # true color
 set -g ENHANCD_DISABLE_DOT 1
 set -g ENHANCD_DISABLE_HOME 1
 
+fish_vi_key_bindings
+
 abbr -a ls exa --icons
 abbr -a ll exa -l --icons
 abbr -a la exa -la --icons

@@ -3,7 +3,7 @@
 spacing = 0
 padding = 0
 hide_ascii = false
-separator = '>'
+separator = ' 󰄾 '
 key_color = '#78A9FF'
 separator_color = '#f2f4f8'
 prefer_small_ascii = true
