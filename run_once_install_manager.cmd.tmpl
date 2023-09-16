@@ -3,6 +3,7 @@
 {{ end -}}
 #!/usr/bin/env bash
 
+# install brew
 if type brew > /dev/null 2>&1 ; then
     echo 'brew is installed.'
 else
@@ -15,3 +16,15 @@ fi
 
 cd {{.chezmoi.sourceDir}}
 type brew > /dev/null 2>&1 && brew bundle --no-lock
+
+cd ~
+# install runtime via rtx
+rtx install
+
+# fish plugin settings
+fish -c "type fisher" > /dev/null 2>&1 || fish -c "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source\
+  && fisher install jorgebucaran/fisher\
+  && fisher install h-matsuo/fish-color-scheme-switcher"
+
+# ranger plugin settings
+test -d ~/.config/ranger/plugins/ranger_devicons || git clone https://github.com/alexanderjeurissen/ranger_devicons ~/.config/ranger/plugins/ranger_devicons
