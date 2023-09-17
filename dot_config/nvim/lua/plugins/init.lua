@@ -51,6 +51,32 @@ return {
         tag = 'legacy',
         opts = {window = {blend = 0}}
     },
+    {
+        'lukas-reineke/indent-blankline.nvim',
+        event = {'BufReadPost', 'BufNewFile'},
+        config = require('plugins.indent_blankline')
+    },
+    {
+        "tversteeg/registers.nvim",
+        name = "registers",
+        keys = {
+            { "\"",    mode = { "n", "v" } },
+            { "<C-R>", mode = "i" }
+        },
+        cmd = "Registers",
+        opts = { window = {
+            border = 'single',
+            transparency = 20
+        }}
+    },
+    {
+        'rcarriga/nvim-notify',
+        init = function () vim.notify = function(text, ...) require('notify')(text, ...) end end,
+        opts = {
+            render = 'compact',
+            background_colour = '#000000'
+        }
+    },
     -- Motion
     {
         'unblevable/quick-scope',
@@ -165,10 +191,16 @@ return {
             'HiPhish/rainbow-delimiters.nvim',
             {'folke/todo-comments.nvim', opts = {}},
             {'norcalli/nvim-colorizer.lua', opts = {}},
-            {'haringsrob/nvim_context_vt', opts = {enabled = true, prefix = ''}}
+            {'haringsrob/nvim_context_vt', opts = {enabled = true, prefix = ''}},
+            {'nvim-treesitter/nvim-treesitter-context', opts = {}}
         }
     },
     -- Completion
+    {
+        'windwp/nvim-autopairs',
+        event = "InsertEnter",
+        opts = {}
+    },
     { --- lsp
         'williamboman/mason.nvim',
         event = {'BufReadPre', 'BufNewFile'},
@@ -251,6 +283,7 @@ return {
     },
     {
         'rmagatti/auto-session',
+        cmd = 'SessionRestore',
         event = {'BufReadPost', 'BufNewFile'},
         opts = { auto_restore_enabled = false }
     },
