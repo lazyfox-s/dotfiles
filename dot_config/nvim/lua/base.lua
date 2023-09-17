@@ -81,3 +81,27 @@ vim.o.timeoutlen = 500
 
 vim.o.undofile = true
 vim.o.undodir = vim.fn.stdpath('cache')..'/undo'
+
+
+-- load ploject locaal setting
+vim.api.nvim_create_augroup('vimrc_local', {})
+vim.api.nvim_create_autocmd({'BufNewFile', 'BufReadPost'}, {
+    group = 'vimrc_local',
+    pattern = '*',
+    callback = function ()
+        local file = vim.fn.findfile('.vimrc_local', '.;')
+        if vim.fn.filereadable(file) == 1 then
+            vim.cmd.source(file)
+        end
+    end
+})
+
+
+-- apply dotfiles
+vim.api.nvim_create_augroup('dotfiles_apply', {})
+vim.api.nvim_create_autocmd('BufWritePost', {
+    group = 'dotfiles_apply',
+    pattern = vim.fn.expand('~/.local/share/chezmoi/')..'*',
+    callback = function() vim.fn.system('chezmoi apply') end
+})
+
