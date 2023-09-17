@@ -14,7 +14,7 @@ local hintMain = [[
    ⠉⠻⢿⣿⠿⣿⣿⣶⣦⠤⠄⡠⢾⣿⣿⡿⠋⠉⠉⠻⣿⣿⡛⣦       
          ⠈⢿⣿⣟⠦ ⣾⣿⣿⣷⠄⠄⠄⠄⠻⠿⢿⣿⣧⣄     _f_: fuzzy finder      _g_: source control
           ⣸⣿⣿⢧ ⢻⠻⣿⣿⣷⣄⣀⠄⠢⣀⡀⠈⠙⠿⠄    _m_: qfixmemo          _w_: vimwiki
-         ⢠⣿⣿⣿⠈  ⠡⠌⣻⣿⣿⣿⣿⣿⣿⣿⣛⣳⣤⣀⣀   _r_: restore session   _l_: LSP
+         ⢠⣿⣿⣿⠈  ⠡⠌⣻⣿⣿⣿⣿⣿⣿⣿⣛⣳⣤⣀⣀   _s_: restore session   _l_: LSP
   ⢠⣧⣶⣥⡤⢄ ⣸⣿⣿⠘⠄ ⢀⣴⣿⣿⡿⠛⣿⣿⣧⠈⢿⠿⠟⠛⠻⠿⠄  _o_: options           _d_: dotfiles
  ⣰⣿⣿⠛⠻⣿⣿⡦⢹⣿⣷   ⢊⣿⣿⡏  ⢸⣿⣿⡇ ⢀⣠⣄⣾⠄   
 ⣠⣿⠿⠛⠄⢀⣿⣿⣷⠘⢿⣿⣦⡀ ⢸⢿⣿⣿⣄ ⣸⣿⣿⡇⣪⣿⡿⠿⣿⣷⡄  _q_: exit
@@ -47,7 +47,7 @@ hydra({
         { 'g', '<leader>g', { remap = true }},
         { 'm', ':call qfixmemo#EditNew()<CR>'},
         { 'w', ':VimwikiIndex<CR>' },
-        { 'r', ':RestoreSession<CR>'},
+        { 's', ':SessionRestore<CR>'},
         { 'l', '<leader>l', { remap = true } },
         { 'o', '<leader>o', { remap = true } },
         { 'd', ':Telescope find_files prompt_title=dotfiles cwd=$HOME/dotfiles<CR>'},
