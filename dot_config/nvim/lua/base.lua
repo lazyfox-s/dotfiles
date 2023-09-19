@@ -89,7 +89,7 @@ vim.api.nvim_create_autocmd({'BufNewFile', 'BufReadPost'}, {
     group = 'vimrc_local',
     pattern = '*',
     callback = function ()
-        local file = vim.fn.findfile('.vimrc_local', '.;')
+        local file = vim.fn.findfile('.vimrc.local', '.;')
         if vim.fn.filereadable(file) == 1 then
             vim.cmd.source(file)
         end
