@@ -32,7 +32,12 @@ vim.api.nvim_create_augroup('help_keymap', {})
 vim.api.nvim_create_autocmd('FileType', {
     group = 'help_keymap',
     pattern = 'help',
-    callback = function() vim.keymap.set('n', 'q', '<cmd>q<CR>', { buffer = true } ) end
+    callback = function()
+        vim.keymap.set('n', 'q', '<cmd>q<CR>', { buffer = true })
+        vim.keymap.set('n', '<CR>', '<C-]>', { buffer = true })
+        vim.keymap.set('n', '<C-o>', '<C-t>', { buffer = true })
+        vim.keymap.set('n', '<C-i>', '<cmd>tag<CR>', { buffer = true })
+    end
 })
 
 -- buffer
