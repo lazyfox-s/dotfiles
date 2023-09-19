@@ -47,10 +47,12 @@ require('scrollbar').setup({
             text = { '-', '=' }
         },
         GitAdd = {
-            text = '┃'
+            text = '┃',
+            highlight = 'diffAdded'
         },
         GitChange = {
-            text = '┃'
+            text = '┃',
+            highlight = 'diffChanged'
         },
         GitDelete = {
             text = '▁'
