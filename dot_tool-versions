@@ -4,3 +4,4 @@ deno    latest
 flutter latest
 dart    latest
 cmake   latest
+ninja   latest

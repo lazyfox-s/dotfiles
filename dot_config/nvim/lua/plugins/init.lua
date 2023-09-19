@@ -185,6 +185,7 @@ return {
         'nvim-treesitter/nvim-treesitter',
         build = ':TSUpdate',
         event = {'BufReadPost', 'BufNewFile'},
+        commit = '33eb472',
         cmd = 'TSUpdateSync',
         config = require('plugins.treesitter').config,
         dependencies = {
@@ -214,6 +215,15 @@ return {
     {
         'neovim/nvim-lspconfig',
         dependencies = {'j-hui/fidget.nvim'}
+    },
+    {
+        'akinsho/flutter-tools.nvim',
+        event = {'BufReadPre', 'BufNewFile'},
+        opts = {},
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            'neovim/nvim-lspconfig',
+        }
     },
     { --- auto completion with snippet
         'hrsh7th/nvim-cmp',
