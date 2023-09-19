@@ -167,7 +167,6 @@ return {
         keys = require('plugins.fern').keys,
         init = require('plugins.fern').init,
         dependencies = {
-            'lambdalisue/fern-hijack.vim',
             'lambdalisue/fern-renderer-nerdfont.vim',
             'lambdalisue/fern-git-status.vim',
             'lambdalisue/nerdfont.vim',
@@ -177,7 +176,8 @@ return {
     {
         'stevearc/oil.nvim',
         cmd = 'Oil',
-        opts = {},
+        opts = require('plugins.oil').opts,
+        init = require('plugins.oil').init,
         dependencies = { 'nvim-tree/nvim-web-devicons' }
     },
     -- syntax highlighting
