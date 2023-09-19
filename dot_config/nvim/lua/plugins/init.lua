@@ -118,7 +118,7 @@ return {
     -- Operator
     {
         'kana/vim-operator-replace',
-        keys = {{'R', '<Plug>(operator-replace)', {mode = '', remap = true}}},
+        keys = {{'R', '<Plug>(operator-replace)', mode = {'n', 'x', 'o'}, remap = true}},
         dependencies = { 'kana/vim-operator-user' }
     },
     {
