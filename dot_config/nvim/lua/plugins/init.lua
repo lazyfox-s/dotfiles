@@ -77,6 +77,13 @@ return {
             background_colour = '#000000'
         }
     },
+    {
+        'mbbill/undotree',
+        cmd = 'UndotreeToggle',
+        init = function ()
+            vim.g.undotree_SetFocusWhenToggle = true
+        end
+    },
     -- Motion
     {
         'unblevable/quick-scope',
