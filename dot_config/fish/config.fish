@@ -5,7 +5,7 @@ set -g ENHANCD_DISABLE_HOME 1
 set -x EDITOR nvim
 set -g SHELL (which fish)
 
-type rtx && rtx activate fish | source
+type rtx > /dev/null 2>&1 && rtx activate fish | source
 
 fish_vi_key_bindings
 
