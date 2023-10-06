@@ -23,6 +23,8 @@ M.init = function()
     vim.g.QFixHowm_HolidayFile = '~/Documents/howm/Sche-Hd-0000-00-00-000000.utf8'
     vim.g.QFixHowm_RecentDays = 30
 
+    vim.g.QFixHowm_DiaryFile = '%Y/%m/%Y-%m-%d-000000.md'
+    vim.g.howm_filename = '%Y/%m/%Y-%m-%d-%H%M%S.md'
     vim.g.QFixHowm_Wiki = 1
     vim.g.QFixHowm_WikiDir = 'notes'
      vim.g.QFixMRU_Filename = '~/.qfixmru'
