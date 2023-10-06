@@ -34,5 +34,22 @@
     navigate = true
     line-numbers = true
     side-by-side = true
+    line-numbers-left-format = " {nm} "
+    line-numbers-right-format = "  {np} "
+    hunk-header-style = 'omit'
+    decorations = true
+    light = false
+
 [diff]
     colorMoved = default
+    tool = delta
+
+[difftool]
+    prompt = false
+    trustExitCode = true
+
+[difftool "kitty"]
+    cmd = kitty +kitten diff $LOCAL $REMOTE
+
+[difftool "delta"]
+    cmd = delta $LOCAL $REMOTE
