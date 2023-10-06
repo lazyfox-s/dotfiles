@@ -35,7 +35,7 @@ require('bufferline').setup{
         },
         diagnostics = false,
         themable = true,
-        numbers = 'buffer_id'
+        numbers = 'ordinal'
     },
     highlights = {
         fill = {
