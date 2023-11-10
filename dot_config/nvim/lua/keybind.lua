@@ -40,6 +40,15 @@ vim.api.nvim_create_autocmd('FileType', {
     end
 })
 
+vim.api.nvim_create_augroup('qf_keymap', {})
+vim.api.nvim_create_autocmd('FileType', {
+    group = 'qf_keymap',
+    pattern = 'qf',
+    callback = function ()
+        vim.keymap.set('n', 'q', '<cmd>q<CR>', { buffer = true })
+    end
+})
+
 -- buffer
 -- vim.keymap.set('n', 'bn', vim.cmd.bnext)
 -- vim.keymap.set('n', 'bN', vim.cmd.bprevious)

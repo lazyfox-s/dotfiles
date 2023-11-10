@@ -37,7 +37,6 @@ local config = function()
 local db = require('dashboard')
 local home = os.getenv('HOME')
 local ascii_file = home..'/.config/nvim/splash.txt'
-local update_text = ''..require('lazy').stats().startuptime
 
 db.setup {
     theme = 'doom',

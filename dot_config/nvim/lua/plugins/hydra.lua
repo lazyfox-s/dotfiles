@@ -15,11 +15,11 @@ local hintMain = [[
          ⠈⢿⣿⣟⠦ ⣾⣿⣿⣷⠄⠄⠄⠄⠻⠿⢿⣿⣧⣄     _f_: fuzzy finder      _g_: source control
           ⣸⣿⣿⢧ ⢻⠻⣿⣿⣷⣄⣀⠄⠢⣀⡀⠈⠙⠿⠄    _m_: qfixmemo          _w_: vimwiki
          ⢠⣿⣿⣿⠈  ⠡⠌⣻⣿⣿⣿⣿⣿⣿⣿⣛⣳⣤⣀⣀   _s_: restore session   _l_: LSP
-  ⢠⣧⣶⣥⡤⢄ ⣸⣿⣿⠘⠄ ⢀⣴⣿⣿⡿⠛⣿⣿⣧⠈⢿⠿⠟⠛⠻⠿⠄  _t_: terminal          _u_: undo tree
- ⣰⣿⣿⠛⠻⣿⣿⡦⢹⣿⣷   ⢊⣿⣿⡏  ⢸⣿⣿⡇ ⢀⣠⣄⣾⠄   _o_: options           _d_: dotfiles
-⣠⣿⠿⠛⠄⢀⣿⣿⣷⠘⢿⣿⣦⡀ ⢸⢿⣿⣿⣄ ⣸⣿⣿⡇⣪⣿⡿⠿⣿⣷⡄  
-⠙⠃   ⣼⣿⡟  ⠈⠻⣿⣿⣦⣌⡇⠻⣿⣿⣷⣿⣿⣿ ⣿⣿⡇⠄⠛⠻⢷⣄ _q_: exit
-     ⢻⣿⣿⣄   ⠈⠻⣿⣿⣿⣷⣿⣿⣿⣿⣿⡟ ⠫⢿⣿⡆     
+  ⢠⣧⣶⣥⡤⢄ ⣸⣿⣿⠘⠄ ⢀⣴⣿⣿⡿⠛⣿⣿⣧⠈⢿⠿⠟⠛⠻⠿⠄  _d_: draw diagram      _u_: undo tree
+ ⣰⣿⣿⠛⠻⣿⣿⡦⢹⣿⣷   ⢊⣿⣿⡏  ⢸⣿⣿⡇ ⢀⣠⣄⣾⠄   _o_: options           _c_: dotfiles
+⣠⣿⠿⠛⠄⢀⣿⣿⣷⠘⢿⣿⣦⡀ ⢸⢿⣿⣿⣄ ⣸⣿⣿⡇⣪⣿⡿⠿⣿⣷⡄  _t_: toggle term
+⠙⠃   ⣼⣿⡟  ⠈⠻⣿⣿⣦⣌⡇⠻⣿⣿⣷⣿⣿⣿ ⣿⣿⡇⠄⠛⠻⢷⣄ 
+     ⢻⣿⣿⣄   ⠈⠻⣿⣿⣿⣷⣿⣿⣿⣿⣿⡟ ⠫⢿⣿⡆     _q_: exit
       ⠻⣿⣿⣿⣿⣶⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⡟⢀⣀⣤⣾⡿⠃     
     ⢰⣶  ⣶ ⢶⣆⢀⣶⠂⣶⡶⠶⣦⡄⢰⣶⠶⢶⣦  ⣴⣶     
     ⢸⣿⠶⠶⣿ ⠈⢻⣿⠁ ⣿⡇ ⢸⣿⢸⣿⢶⣾⠏ ⣸⣟⣹⣧    
@@ -50,9 +50,10 @@ hydra({
         { 's', ':SessionRestore<CR>'},
         { 'l', '<leader>l', { remap = true } },
         { 'o', '<leader>o', { remap = true } },
-        { 'u', ':UndotreeToggle'},
-        { 't', ':ToggleTerm'},
-        { 'd', ':Telescope find_files prompt_title=dotfiles cwd=$HOME/.local/share/chezmoi<CR>'},
+        { 'u', ':UndotreeToggle<CR>'},
+        { 't', ':ToggleTerm<CR>'},
+        { 'd', '<leader>d', { remap = true } },
+        { 'c', ':Telescope find_files prompt_title=dotfiles cwd=$HOME/.local/share/chezmoi<CR>'},
         { 'q', nil, { exit = true, nowait = true, desc = 'exit' } },
     }
 })
@@ -212,11 +213,13 @@ hydra({
 local hintLSP = [[
 ^ ^             LSP
 
-_c_: code action    _f_: format
-_r_: rename
+_a_: code action    _F_: Format
+_r_: rename         _R_: project-wide replace
 
-_h_: hover          _R_: references
-_i_: implementation 
+_h_: hover doc      _o_: show outline
+_f_: finder
+
+_d_: diag in line   _D_: diag in project
 
 ^ ^                 _q_: exit
 ]]
@@ -240,12 +243,15 @@ hydra({
     mode = 'n',
     body = '<leader>l',
     heads = {
-        { 'c', lsp.code_action},
-        { 'f', lsp.format},
-        { 'r', lsp.rename},
-        { 'h', lsp.hover},
-        { 'R', lsp.references},
-        { 'i', lsp.implementation},
+        { 'a', '<cmd>Lspsaga code_action<CR>'},
+        { 'F', lsp.format},
+        { 'f', '<cmd>Lspsaga finder<CR>'},
+        { 'r', '<cmd>Lspsaga rename<CR>'},
+        { 'R', '<cmd>Lspsaga rename ++project<CR>'},
+        { 'h', '<cmd>Lspsaga hover_doc<CR>'},
+        { 'o', '<cmd>Lspsaga outline<CR>'},
+        { 'd', '<cmd>Lspsaga show_line_diagnostics ++unfocus<CR>'},
+        { 'D', '<cmd>Trouble<CR>'},
         { 'q', nil, { exit = true, nowait = true, desc = 'exit' } },
     }
 })
@@ -372,6 +378,38 @@ hydra({
     }
 })
 
+
+local hint_venn = [[
+ Arrow^^^^^^   Select region with <C-v> 
+ ^ ^ _K_ ^ ^   _f_: surround it with box
+ _H_ ^ ^ _L_
+ ^ ^ _J_ ^ ^                      _<Esc>_
+]]
+
+hydra({
+   name = 'Draw Diagram',
+   hint = hint_venn,
+   config = {
+      color = 'pink',
+      invoke_on_body = true,
+      hint = {
+         border = 'rounded'
+      },
+      on_enter = function()
+         vim.o.virtualedit = 'all'
+      end,
+   },
+   mode = 'n',
+   body = '<leader>d',
+   heads = {
+      { 'H', '<C-v>h:VBox<CR>' },
+      { 'J', '<C-v>j:VBox<CR>' },
+      { 'K', '<C-v>k:VBox<CR>' },
+      { 'L', '<C-v>l:VBox<CR>' },
+      { 'f', ':VBox<CR>', { mode = 'v' }},
+      { '<Esc>', nil, { exit = true } },
+   }
+})
 end
 
 return M

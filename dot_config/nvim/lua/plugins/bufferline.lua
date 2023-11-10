@@ -31,6 +31,11 @@ require('bufferline').setup{
                 filetype = 'help',
                 text = 'Help',
                 highlight = 'Tabline'
+            },
+            {
+                filetype = 'fern',
+                text = 'Fern',
+                highlight = 'Tabline'
             }
         },
         diagnostics = false,

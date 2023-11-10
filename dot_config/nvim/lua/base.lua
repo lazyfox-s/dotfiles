@@ -11,6 +11,7 @@ vim.o.relativenumber = true
 vim.o.visualbell = true
 vim.o.errorbells = false
 vim.o.cursorline = true
+vim.o.signcolumn = 'yes'
 
 vim.api.nvim_create_augroup('toggle_relativenumber', {})
 vim.api.nvim_create_autocmd('InsertEnter', {

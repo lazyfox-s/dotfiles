@@ -19,10 +19,14 @@ M.config = function()
     files.bindings['h'] = files.bindings['e']
     files.bindings['N'] = files.bindings['c']
 
+    local todos = require('sidebar-nvim.builtin.todos')
+    todos.bindings['l'] = files.bindings['e']
+
     require('sidebar-nvim').setup({
         sections = {
             'git',
             'diagnostics',
+            'todos',
             'files',
             'containers'
         },
@@ -32,6 +36,9 @@ M.config = function()
         files = {
             show_hidden = true,
         },
+        todos = {
+            initially_closed = false
+        }
     })
 
 end

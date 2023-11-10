@@ -48,6 +48,9 @@ M.config = function()
             { name = 'nvim_lsp_signature_help' },
             { name = 'skkeleton' },
             { name = 'vsnip' },
+            { name = 'path' },
+            { name = 'emoji' },
+            { name = 'calc' }
         }, {
             { name = 'buffer' }
         }),

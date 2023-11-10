@@ -28,7 +28,7 @@ return {
     },
     {
         'petertriho/nvim-scrollbar',
-        event = 'CmdlineEnter',
+        event = {'BufReadPost', 'BufNewFile'},
         config = require('plugins.scrollbar').config,
         dependencies = {
             'kevinhwang91/nvim-hlslens',
@@ -49,6 +49,7 @@ return {
     {
         'j-hui/fidget.nvim',
         tag = 'legacy',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
         opts = {window = {blend = 0}}
     },
     {
@@ -83,6 +84,10 @@ return {
         init = function ()
             vim.g.undotree_SetFocusWhenToggle = true
         end
+    },
+    {
+        'kwkarlwang/bufresize.nvim',
+        opts = {}
     },
     -- Motion
     {
@@ -221,7 +226,10 @@ return {
     },
     {
         'neovim/nvim-lspconfig',
-        dependencies = {'j-hui/fidget.nvim'}
+        dependencies = {
+            'j-hui/fidget.nvim',
+            'folke/trouble.nvim'
+        }
     },
     {
         'akinsho/flutter-tools.nvim',
@@ -230,6 +238,15 @@ return {
         dependencies = {
             'nvim-lua/plenary.nvim',
             'neovim/nvim-lspconfig',
+            'nvimdev/lspsaga.nvim',
+        }
+    },
+    {
+        'nvimdev/lspsaga.nvim',
+        opts = require('plugins.lspsaga').opts,
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter',
+            'nvim-tree/nvim-web-devicons'
         }
     },
     { --- auto completion with snippet
@@ -244,6 +261,8 @@ return {
             'hrsh7th/cmp-cmdline',
             'hrsh7th/cmp-vsnip',
             'hrsh7th/vim-vsnip',
+            'hrsh7th/cmp-emoji',
+            'hrsh7th/cmp-calc',
             'onsails/lspkind.nvim',
             {'rinx/cmp-skkeleton', dependencies = {'vim-skk/skkeleton'}},
             'hrsh7th/cmp-nvim-lsp-signature-help'
@@ -310,11 +329,30 @@ return {
         config = require('plugins.hydra').config,
         dependencies = {
             'akinsho/toggleterm.nvim',
+            'jbyuki/venn.nvim',
+            'nvimdev/lspsaga.nvim',
+            'folke/trouble.nvim'
             --'sidebar-nvim/sidebar.nvim'
         }
     },
     {
         'vim-jp/vimdoc-ja',
         event = 'CmdlineEnter',
-    }
+    },
+    {
+        'jghauser/mkdir.nvim',
+        event = {'BufWritePre'},
+    },
+    {
+        'tyru/capture.vim',
+        cmd = 'Capture'
+    },
+    {
+        'kevinhwang91/nvim-bqf',
+        ft = 'qf'
+    },
+    {
+        'AndrewRadev/linediff.vim',
+        cmd = 'Linediff'
+    },
 }
