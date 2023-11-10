@@ -46,8 +46,14 @@ require('lualine').setup({
             'diagnostics',
             always_visible=false,
             symbols = {error=' ', warn=' ', info=' ', hint=' '}} },
-        lualine_x = { 'progress' },
-        lualine_y = { 
+        lualine_x = {
+                {
+                    function() return '󰒲 '..require('lazy.status').updates() end,
+                    cond = require('lazy.status').has_updates,
+                    color = {fg = '#ee5396'}
+                }
+            },
+        lualine_y = {
             {'encoding', icon=''},
             {
                 'fileformat',
@@ -60,7 +66,7 @@ require('lualine').setup({
             'filetype',
             { getFileTime, icon=''},
         },
-        lualine_z = { 'location' }
+        lualine_z = { 'location', 'progress' },
     }
 })
 

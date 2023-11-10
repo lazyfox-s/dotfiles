@@ -15,6 +15,21 @@ local set_ansi_color = function()
     vim.cmd([[highlight AnsiColorMagenta ctermfg=Magenta guifg=Magenta]])
     vim.cmd([[highlight AnsiColorCyan ctermfg=Cyan guifg=Cyan]])
     vim.cmd([[highlight AnsiColorWhite ctermfg=White guifg=White]])
+
+    vim.cmd([[highlight link DashboardFooter Comment]])
+end
+
+local function generate_footer()
+    local stats = require('lazy').stats()
+
+    local plugins =stats.loaded..'/'..stats.count
+    local startup = string.format('%4.2f', stats.startuptime)
+    local plugin_text = ' '..startup..'ms with '..plugins..' plugins'
+
+    local version = vim.version()
+    local version_text = ' v'..version.major..'.'..version.minor..'.'..version.patch
+
+    return {version_text..' '..plugin_text}
 end
 
 local config = function()
@@ -22,11 +37,7 @@ local config = function()
 local db = require('dashboard')
 local home = os.getenv('HOME')
 local ascii_file = home..'/.config/nvim/splash.txt'
-local update_text = ''
-
-if (require('lazy.status').has_updates()) then
-    update_text = 'Some plugins has updates.'
-end
+local update_text = ''..require('lazy').stats().startuptime
 
 db.setup {
     theme = 'doom',
@@ -62,7 +73,7 @@ db.setup {
             action = 'Telescope find_files prompt_title=dotfiles cwd=$HOME/.local/share/chezmoi',
             key = 'd'},
         },
-        footer = {update_text},
+        footer = generate_footer,
     },
     hide = {
         statusline,
