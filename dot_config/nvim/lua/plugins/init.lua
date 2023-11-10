@@ -89,6 +89,20 @@ return {
         'kwkarlwang/bufresize.nvim',
         opts = {}
     },
+    {
+        'stevearc/dressing.nvim',
+        init = function ()
+            vim.ui.input = function (...)
+                require('dressing')
+                vim.ui.input(...)
+            end
+            vim.ui.select = function (...)
+                require('dressing')
+                vim.ui.select(...)
+            end
+        end,
+        opts = {}
+    },
     -- Motion
     {
         'unblevable/quick-scope',

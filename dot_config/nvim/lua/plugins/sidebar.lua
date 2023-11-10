@@ -1,5 +1,22 @@
 local M = {}
 
+local function git_commit()
+    vim.ui.input({
+        prompt = 'Commit message'
+    },
+        function (input)
+            if input == nil then
+                vim.notify('commit canceled')
+                return
+            end
+
+            local message = vim.fn.system('git commit -m "'..input..'"')
+            vim.cmd.SidebarNvimUpdate()
+            vim.notify(message)
+        end
+    )
+end
+
 M.keys = {
     {'<C-b>', function() require('sidebar-nvim').toggle() end}
 }
@@ -13,6 +30,7 @@ M.config = function()
     git.bindings['<<'] = git.bindings['s']
     git.bindings['>>'] = git.bindings['u']
     git.bindings['l'] = git.bindings['e']
+    git.bindings['c'] = git_commit
 
     local files = require('sidebar-nvim.builtin.files')
     files.bindings['l'] = files.bindings['e']
