@@ -1,21 +1,26 @@
 local M = {}
 
 M.config = function ()
-vim.cmd [[highlight default link IndentBlanklineChar LineNr]]
-vim.cmd [[highlight default link IndentBlanklineContextChar CursorLineNr]]
-vim.g.indent_blankline_filetype_exclude = {
-    'lspinfo',
-    'packer',
-    'checkhealth',
-    'help',
-    'man',
-    '',
-    'dashboard'
-}
 
-require('indent_blankline').setup {
-    show_current_context = true,
-    show_current_context_start = false,
+require('ibl').setup {
+    exclude = { filetypes = {
+        'lspinfo',
+        'packer',
+        'checkhealth',
+        'help',
+        'man',
+        '',
+        'dashboard'
+    }},
+    indent = {
+        highlight = 'LineNr'
+    },
+    scope = {
+        show_start = false,
+        show_end = false,
+        show_exact_scope = true,
+        highlight = 'CursorLineNr',
+    },
 }
 end
 

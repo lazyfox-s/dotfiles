@@ -55,7 +55,7 @@ return {
     {
         'lukas-reineke/indent-blankline.nvim',
         event = {'BufReadPost', 'BufNewFile'},
-        config = require('plugins.indent_blankline')
+        config = require('plugins.indent_blankline').config
     },
     {
         "tversteeg/registers.nvim",
