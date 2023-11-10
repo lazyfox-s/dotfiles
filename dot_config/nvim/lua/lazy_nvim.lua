@@ -27,5 +27,6 @@ require('lazy').setup(plugins, {
         cache = {
             enabled = true
         }
-    }
+    },
+    lockfile = vim.fn.expand('$HOME/.local/share/chezmoi/lazy-lock.json')
 })
