@@ -103,6 +103,15 @@ return {
         end,
         opts = {}
     },
+    {
+        '3rd/image.nvim',
+        ft = 'markdown',
+        opts = {
+            -- max_width_window_percentage = 25,
+            max_height_window_percentage = 10
+        },
+        dependencies = { 'leafo/magick' }
+    },
     -- Motion
     {
         'unblevable/quick-scope',
@@ -258,6 +267,8 @@ return {
     {
         'nvimdev/lspsaga.nvim',
         opts = require('plugins.lspsaga').opts,
+        cmd = 'Lspsaga',
+        init = require('plugins.lspsaga').init,
         dependencies = {
             'nvim-treesitter/nvim-treesitter',
             'nvim-tree/nvim-web-devicons'
@@ -311,6 +322,11 @@ return {
         'fuenor/qfixhowm',
         keys = { 'g,' },
         init = require('plugins.howm').init
+    },
+    -- Library
+    {
+        'leafo/magick',
+        build = 'mkdir -p lua && cp -r magick lua/'
     },
     -- Misc
     {

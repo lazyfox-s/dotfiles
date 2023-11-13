@@ -4,6 +4,7 @@ set -g ENHANCD_DISABLE_DOT 1
 set -g ENHANCD_DISABLE_HOME 1
 set -x EDITOR nvim
 set -g SHELL (which fish)
+set -x PKG_CONFIG_PATH /home/linuxbrew/.linuxbrew/lib/pkgconfig
 
 type rtx > /dev/null 2>&1 && rtx activate fish | source
 
