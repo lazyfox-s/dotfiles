@@ -13,27 +13,17 @@ vim.o.errorbells = false
 vim.o.cursorline = true
 vim.o.signcolumn = 'yes'
 
-vim.api.nvim_create_augroup('toggle_relativenumber', {})
-vim.api.nvim_create_autocmd('InsertEnter', {
-    group = 'toggle_relativenumber',
-    pattern = '*',
-    callback = function() vim.wo.relativenumber = false end
-})
-vim.api.nvim_create_autocmd('InsertLeave', {
-    group = 'toggle_relativenumber',
-    pattern = '*',
-    callback = function() vim.wo.relativenumber = true end
-})
-vim.api.nvim_create_autocmd('BufEnter', {
-    group = 'toggle_relativenumber',
-    pattern = '*',
-    callback = function() vim.wo.relativenumber = true end
-})
-vim.api.nvim_create_autocmd('BufLeave', {
-    group = 'toggle_relativenumber',
-    pattern = '*',
-    callback = function() vim.wo.relativenumber = false end
-})
+-- local toggle_relative = {
+--     group = 'toggle_relativenumber',
+--     pattern = '*',
+--     callback = require('functions').reset_number
+-- }
+-- 
+-- vim.api.nvim_create_augroup('toggle_relativenumber', {})
+-- vim.api.nvim_create_autocmd('InsertEnter', toggle_relative)
+-- vim.api.nvim_create_autocmd('InsertLeave', toggle_relative)
+-- vim.api.nvim_create_autocmd('BufEnter', toggle_relative)
+-- vim.api.nvim_create_autocmd('BufLeave', toggle_relative)
 
 --- indent
 vim.o.tabstop = 4

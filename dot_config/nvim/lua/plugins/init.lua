@@ -112,6 +112,11 @@ return {
         },
         dependencies = { 'leafo/magick' }
     },
+    {
+        'myusuf3/numbers.vim',
+        lazy = false,
+        init = function() vim.g.numbers_exclude = {'SidebarNvim', 'dashboard', 'TelescopePrompt'} end
+    },
     -- Motion
     {
         'unblevable/quick-scope',
@@ -384,5 +389,9 @@ return {
     {
         'AndrewRadev/linediff.vim',
         cmd = 'Linediff'
+    },
+    {
+        'thinca/vim-partedit',
+        cmd = 'Partedit'
     },
 }
