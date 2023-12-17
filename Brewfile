@@ -11,4 +11,6 @@ brew "deno"
 brew "rtx"
 brew "jq"
 brew "file"
-brew 'ripgrep'
+brew "ripgrep"
+brew "gh"
+brew "imagemagick"
