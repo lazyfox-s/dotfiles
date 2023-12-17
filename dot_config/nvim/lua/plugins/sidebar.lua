@@ -1,3 +1,5 @@
+local lazy_require = require('utils').lazy_require
+
 local M = {}
 
 local function git_commit()
@@ -18,11 +20,11 @@ local function git_commit()
 end
 
 M.keys = {
-    {'<C-b>', function() require('sidebar-nvim').toggle() end}
+    {'<C-b>', lazy_require('sidebar-nvim').toggle}
 }
 
 M.init = function()
-    vim.keymap.set('n', '<C-b>', function() require('sidebar-nvim').toggle() end, {})
+    vim.keymap.set('n', '<C-b>', lazy_require('sidebar-nvim').toggle, {})
 end
 
 M.config = function()

@@ -1,3 +1,5 @@
+local lazy_require = require('utils').lazy_require
+
 return {
     -- Apparence
     {   -- colorscheme
@@ -72,7 +74,7 @@ return {
     },
     {
         'rcarriga/nvim-notify',
-        init = function () vim.notify = function(text, ...) require('notify')(text, ...) end end,
+        init = function () vim.notify = lazy_require('notify') end,
         opts = {
             render = 'compact',
             background_colour = '#000000'
@@ -92,14 +94,8 @@ return {
     {
         'stevearc/dressing.nvim',
         init = function ()
-            vim.ui.input = function (...)
-                require('dressing')
-                vim.ui.input(...)
-            end
-            vim.ui.select = function (...)
-                require('dressing')
-                vim.ui.select(...)
-            end
+            vim.ui.input = lazy_require('dressing.input')
+            vim.ui.select = lazy_require('dressing.select')
         end,
         opts = {}
     },
