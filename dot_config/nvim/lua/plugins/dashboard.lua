@@ -24,7 +24,7 @@ local function generate_footer()
 
     local plugins =stats.loaded..'/'..stats.count
     local startup = string.format('%4.2f', stats.startuptime)
-    local plugin_text = ' '..startup..'ms with '..plugins..' plugins'
+    local plugin_text = '  '..startup..'ms   '..plugins..' loaded'
 
     local version = vim.version()
     local version_text = ' v'..version.major..'.'..version.minor..'.'..version.patch
