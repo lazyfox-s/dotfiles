@@ -9,6 +9,8 @@ vim.keymap.set({'n', 'v'}, '<C-l>', 'g$')
 vim.keymap.set('i', '<C-h>', '<C-o><C-h>', {remap = true})
 vim.keymap.set('i', '<C-l>', '<C-o><C-l>', {remap = true})
 
+vim.keymap.set({'n', 'x'}, 'W', 'b')
+
 -- corresponds <C-[>
 vim.keymap.set('i', '<C-]>', '<ESC><Right>')
 

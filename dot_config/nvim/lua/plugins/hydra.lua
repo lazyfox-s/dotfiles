@@ -43,7 +43,7 @@ hydra({
     mode = 'n',
     body = '<space>',
     heads = {
-        { 'f', ':Telescope<CR>'},
+        { 'f', '<leader>t', { remap = true }},
         { 'g', '<leader>g', { remap = true }},
         { 'm', ':call qfixmemo#EditNew()<CR>'},
         { 'w', ':VimwikiIndex<CR>' },
@@ -58,6 +58,50 @@ hydra({
     }
 })
 
+local hintTelescope = [[
+^ ^         Telescope
+
+_f_: find files    _l_: live grep
+_g_: git files     _o_: old files
+
+_j_: jump list     _b_: buffers
+
+_d_: diagnostics   _x_: quick fix
+
+_c_: neo clip      _r_: register
+
+_q_: exit
+]]
+
+hydra({
+    name = 'Main',
+    hint = hintTelescope,
+    config = {
+        color = 'blue',
+        invoke_on_body = true,
+        hint = {
+            border = 'none'
+        },
+        on_enter = function()
+            vim.o.winblend = 20
+        end,
+    },
+    mode = 'n',
+    body = '<leader>t',
+    heads = {
+        { 'f', ':Telescope find_files<CR>'},
+        { 'l', ':Telescope live_grep<CR>'},
+        { 'g', ':Telescope git_files<CR>'},
+        { 'o', ':Telescope oldfiles<CR>'},
+        { 'j', ':Telescope jumplist<CR>'},
+        { 'b', ':Telescope buffers<CR>'},
+        { 'd', ':Telescope diagnostics<CR>'},
+        { 'x', ':Telescope quickfix<CR>'},
+        { 'c', ':Telescope neoclip<CR>'},
+        { 'r', ':Telescope registers<CR>'},
+        { 'q', nil, { exit = true, nowait = true, desc = 'exit' } },
+    }
+})
 
 local hintFold = [[
 ^ ^            Fold
