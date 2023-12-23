@@ -113,6 +113,12 @@ return {
         lazy = false,
         init = function() vim.g.numbers_exclude = {'SidebarNvim', 'dashboard', 'TelescopePrompt'} end
     },
+    {
+        'folke/zen-mode.nvim',
+        cmd = 'ZenMode',
+        opts = require('plugins.zenmode').opts,
+        dependencies = { 'folke/twilight.nvim' }
+    },
     -- Motion
     {
         'unblevable/quick-scope',
