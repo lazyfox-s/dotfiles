@@ -182,6 +182,10 @@ return {
         event = 'ModeChanged',
         config = require('plugins.modes')
     },
+    {
+        'monaqa/dial.nvim',
+        init = require('plugins.dial').init
+    },
     -- Finder
     {
         'nvim-telescope/telescope.nvim',
@@ -390,4 +394,13 @@ return {
         'thinca/vim-partedit',
         cmd = 'Partedit'
     },
+    {
+        'AckslD/nvim-neoclip.lua',
+        command = 'Telescope',
+        event = 'TextYankPost',
+        dependencies = {
+            'nvim-telescope/telescope.nvim'
+        },
+        opts = {}
+    }
 }
