@@ -31,7 +31,9 @@ type scheme > /dev/null 2>&1 && scheme set tomorrow-night-bright
 starship init fish | source
 
 function fish_greeting
-    type macchina > /dev/null 2>&1 && macchina
+    if [ $SHLVL = '1' ]
+        type macchina > /dev/null 2>&1 && macchina
+    end
 end
 
 function ils
