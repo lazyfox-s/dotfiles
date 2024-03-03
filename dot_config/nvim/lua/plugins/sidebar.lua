@@ -19,6 +19,12 @@ local function git_commit()
     )
 end
 
+local function git_commit_amend()
+    local message = vim.fn.system('git commit --amend --no-edit')
+    vim.cmd.SidebarNvimUpdate()
+    vim.notify(message)
+end
+
 M.keys = {
     {'<C-b>', lazy_require('sidebar-nvim').toggle}
 }
@@ -33,6 +39,7 @@ M.config = function()
     git.bindings['>>'] = git.bindings['u']
     git.bindings['l'] = git.bindings['e']
     git.bindings['c'] = git_commit
+    git.bindings['a'] = git_commit_amend
 
     local files = require('sidebar-nvim.builtin.files')
     files.bindings['l'] = files.bindings['e']
