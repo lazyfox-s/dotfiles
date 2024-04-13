@@ -10,13 +10,14 @@ type rtx > /dev/null 2>&1 && rtx activate fish | source
 
 fish_vi_key_bindings
 
-abbr -a ls exa --icons
-abbr -a ll exa -l --icons
-abbr -a la exa -la --icons
-abbr -a lt exa --tree --icons
-abbr -a lta exa --tree -a --icons
-abbr -a cat bat
-abbr -a vim nvim
+alias ls 'eza --icons'
+alias cat 'bat'
+alias vim 'nvim'
+
+abbr -a ll ls -l
+abbr -a la ls -la
+abbr -a lt ls --tree
+abbr -a lta ls --tree -a
 
 set timg_option ''
 if [ $TERM = 'wezterm' ]
