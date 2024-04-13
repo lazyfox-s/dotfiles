@@ -48,3 +48,8 @@ end
 function ranger
     test -z $RANGER_LEVEL && command ranger $argv || exit
 end
+
+function lk
+    set loc (walk --icons $argv); and cd $loc;
+end
+
