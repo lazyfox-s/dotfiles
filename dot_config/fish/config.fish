@@ -10,7 +10,7 @@ type rtx > /dev/null 2>&1 && rtx activate fish | source
 
 fish_vi_key_bindings
 
-alias ls 'eza --icons'
+alias ls 'eza --icons --git --time-style relative'
 alias cat 'bat'
 alias vim 'nvim'
 
