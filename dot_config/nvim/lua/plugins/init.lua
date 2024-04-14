@@ -1,5 +1,14 @@
 local lazy_require = require('utils').lazy_require
 
+vim.api.nvim_create_autocmd({'User'}, {
+    pattern = 'LazyInstall',
+    callback = function(ev)
+        if vim.fn.executable('magick') == 0 then
+            vim.notify('To render images in markdown, install ImageMagick(MagicWand)')
+        end
+    end
+})
+
 return {
     -- Apparence
     {   -- colorscheme
@@ -102,6 +111,9 @@ return {
     {
         '3rd/image.nvim',
         ft = 'markdown',
+        enabled = function()
+            return vim.fn.executable('magick') == 1
+        end,
         opts = {
             -- max_width_window_percentage = 25,
             max_height_window_percentage = 10
