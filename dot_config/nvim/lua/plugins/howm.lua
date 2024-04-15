@@ -9,7 +9,7 @@ M.init = function()
     vim.g.QFixMRU_Title = {
         md = '^# '
     }
-    vim.g.QFixHowm_SplitMode = 1
+    vim.g.QFixHowm_SplitMode = 0
     vim.g.QFix_CloseOnJump = 1
     vim.g.QFix_PreviewEnable = 1
     vim.g.QFixHowm_MenuCalendar = 1
@@ -29,6 +29,40 @@ M.init = function()
     vim.g.QFixHowm_WikiDir = 'notes'
      vim.g.QFixMRU_Filename = '~/.qfixmru'
     vim.g.QFixMRU_RegisterFile = '~/Documents/howm'
+end
+
+M.get_diary_path = function ()
+    local note_path = vim.g.QFixHowm_RootDir..'/'..vim.g.QFixHowm_DiaryFile
+    note_path = vim.fn.expand(note_path)
+    note_path = vim.fn.strftime(note_path)
+
+    return note_path
+end
+
+M.save_memo = function (memo)
+    if memo == nil then
+        return
+    end
+
+    local note_path = M.get_diary_path()
+
+    local date = vim.fn.strftime('%Y-%m-%d')
+    local time = vim.fn.strftime('%H:%M')
+    local title = {
+        vim.fn.strftime('# %Y-%m-%d'),
+        '['..date..' '..time..']'
+    }
+
+    if vim.fn.filereadable(note_path) == 0 then
+        vim.fn.mkdir(vim.fn.fnamemodify(note_path, ':p:h'), 'p')
+        vim.fn.writefile(title, note_path)
+    end
+
+    if vim.fn.readfile(note_path, 'b', -1)[1] == '' then
+        vim.fn.writefile({'- '..time..' '..memo}, note_path, 'a')
+    else
+        vim.fn.writefile({'', '- '..time..' '..memo}, note_path, 'a')
+    end
 end
 
 return M
