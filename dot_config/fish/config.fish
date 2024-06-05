@@ -6,7 +6,7 @@ set -x EDITOR nvim
 set -g SHELL (which fish)
 set -x PKG_CONFIG_PATH /home/linuxbrew/.linuxbrew/lib/pkgconfig
 
-type rtx > /dev/null 2>&1 && rtx activate fish | source
+type mise > /dev/null 2>&1 && mise activate fish | source
 
 fish_vi_key_bindings
 
