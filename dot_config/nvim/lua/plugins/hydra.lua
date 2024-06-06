@@ -7,7 +7,11 @@ M.keys = {
 
 M.config = function()
 
+vim.api.nvim_set_hl(0, 'HydraHint', {bg='None'})
+vim.api.nvim_set_hl(0, 'HydraBorder', {fg='white'})
+
 local hydra = require('hydra')
+local key = require('hydra.keymap-util')
 
 local hintMain = [[
   ⣴⣶⣤⡤⠦⣤⣀⣤⠆     ⣈⣭⣭⣿⣶⣿⣦⣼⣆         ^ ^           Main Menu
@@ -30,12 +34,11 @@ hydra({
     name = 'Main',
     hint = hintMain,
     config = {
-        buffer = bufnr,
+        hint = {
+            float_opts = { border = 'rounded' }
+        },
         color = 'blue',
         invoke_on_body = true,
-        hint = {
-            border = 'none'
-        },
         on_enter = function()
             vim.o.winblend = 20
         end,
@@ -45,15 +48,15 @@ hydra({
     heads = {
         { 'f', '<leader>t', { remap = true }},
         { 'g', '<leader>g', { remap = true }},
-        { 'm', ':call qfixmemo#EditNew()<CR>'},
-        { 'w', ':VimwikiIndex<CR>' },
-        { 's', ':SessionRestore<CR>'},
+        { 'm', '<leader>m', { remap = true }},
+        { 'w', key.cmd('VimwikiIndex')},
+        { 's', key.cmd('SessionRestore')},
         { 'l', '<leader>l', { remap = true } },
         { 'o', '<leader>o', { remap = true } },
-        { 'u', ':UndotreeToggle<CR>'},
-        { 't', ':ToggleTerm<CR>'},
+        { 'u', key.cmd('UndotreeToggle')},
+        { 't', key.cmd('ToggleTerm')},
         { 'd', '<leader>d', { remap = true } },
-        { 'c', ':Telescope find_files prompt_title=dotfiles cwd=$HOME/.local/share/chezmoi<CR>'},
+        { 'c', key.cmd('Telescope find_files prompt_title=dotfiles cwd=$HOME/.local/share/chezmoi')},
         { 'q', nil, { exit = true, nowait = true, desc = 'exit' } },
     }
 })
@@ -77,11 +80,11 @@ hydra({
     name = 'Main',
     hint = hintTelescope,
     config = {
+        hint = {
+            float_opts = { border = 'rounded' }
+        },
         color = 'blue',
         invoke_on_body = true,
-        hint = {
-            border = 'none'
-        },
         on_enter = function()
             vim.o.winblend = 20
         end,
@@ -123,12 +126,11 @@ hydra({
     name = 'Fold',
     hint = hintFold,
     config = {
-        buffer = bufnr,
+        hint = {
+            float_opts = { border = 'rounded' }
+        },
         color = 'pink',
         invoke_on_body = true,
-        hint = {
-            border = 'none'
-        },
         on_enter = function()
             vim.o.winblend = 20
         end,
@@ -167,12 +169,11 @@ hydra({
     name = 'Window',
     hint = hintWindow,
     config = {
-        buffer = bufnr,
+        hint = {
+            float_opts = { border = 'rounded' }
+        },
         color = 'pink',
         invoke_on_body = true,
-        hint = {
-            border = 'none'
-        },
         on_enter = function()
             vim.o.winblend = 20
         end,
@@ -225,12 +226,11 @@ hydra({
     name = 'Git',
     hint = hintGit,
     config = {
-        buffer = bufnr,
+        hint = {
+            float_opts = { border = 'rounded' }
+        },
         color = 'pink',
         invoke_on_body = true,
-        hint = {
-            border = 'none'
-        },
         on_enter = function()
             vim.o.winblend = 20
         end,
@@ -274,12 +274,11 @@ hydra({
     name = 'LSP',
     hint = hintLSP,
     config = {
-        buffer = bufnr,
+        hint = {
+            float_opts = { border = 'rounded' }
+        },
         color = 'blue',
         invoke_on_body = true,
-        hint = {
-            border = 'none'
-        },
         on_enter = function()
             vim.o.winblend = 20
         end,
@@ -313,7 +312,8 @@ end
 option_func.sidebar = function()
     local windows = vim.api.nvim_list_wins()
     for i = 1, #windows do
-        if vim.api.nvim_get_option_value('filetype', {win = windows[i]}) == 'SidebarNvim' then
+        local buf = vim.api.nvim_win_get_buf(windows[i])
+        if vim.api.nvim_get_option_value('filetype', {buf = buf}) == 'SidebarNvim' then
             return '[x]'
         end
     end
@@ -339,7 +339,8 @@ end
 option_func.terminal = function()
     local windows = vim.api.nvim_list_wins()
     for i = 1, #windows do
-        if vim.api.nvim_get_option_value('filetype', {win = windows[i]}) == 'toggleterm' then
+        local buf = vim.api.nvim_win_get_buf(windows[i])
+        if vim.api.nvim_get_option_value('filetype', {buf = buf}) == 'toggleterm' then
             return '[x]'
         end
     end
@@ -348,6 +349,17 @@ end
 
 option_func.virtual = function()
     if vim.o.virtualedit == 'all' then
+        return '[x]'
+    else
+        return '[ ]'
+    end
+end
+
+option_func.breadcrumbs = function ()
+    local winbar = vim.o.winbar
+    local lspsaga_winbar = require('lspsaga.symbol.winbar').get_bar()
+
+    if winbar == lspsaga_winbar then
         return '[x]'
     else
         return '[ ]'
@@ -365,6 +377,7 @@ _s_ %{smoothie} smooth scroll
 _b_ %{sidebar} side bar
 _r_ %{relative} relative number
 _p_ %{spell} spell
+_w_ %{breadcrumbs} breadcrumbs
 _t_ %{terminal} terminal
 
 _q_ quit
@@ -374,12 +387,11 @@ hydra({
     name = 'Options',
     hint = hintOptions,
     config = {
-        buffer = bufnr,
         color = 'pink',
         invoke_on_body = true,
         hint = {
-            border = 'none',
-            funcs = option_func
+            funcs = option_func,
+            float_opts = { border = 'rounded' }
         },
         on_enter = function()
             vim.o.winblend = 20
@@ -418,6 +430,7 @@ hydra({
             end
         end},
         { 't', terminal.toggle_command, { exit = true }},
+        { 'w', key.cmd('Lspsaga winbar_toggle'), { exit = true }},
         { 'q', nil, { exit = true, nowait = true, desc = 'exit' } },
     }
 })
@@ -434,14 +447,14 @@ hydra({
    name = 'Draw Diagram',
    hint = hint_venn,
    config = {
-      color = 'pink',
-      invoke_on_body = true,
-      hint = {
-         border = 'rounded'
-      },
-      on_enter = function()
-         vim.o.virtualedit = 'all'
-      end,
+        hint = {
+            float_opts = { border = 'rounded' }
+        },
+        color = 'pink',
+        invoke_on_body = true,
+        on_enter = function()
+            vim.o.virtualedit = 'all'
+        end,
    },
    mode = 'n',
    body = '<leader>d',
@@ -453,6 +466,39 @@ hydra({
       { 'f', ':VBox<CR>', { mode = 'v' }},
       { '<Esc>', nil, { exit = true } },
    }
+})
+
+local hintHowm = [[
+^ ^            Howm
+
+_c_: create new     _ _: open diary
+_l_: list memos     _g_: grep search
+
+_q_: exit
+]]
+
+hydra({
+    name = 'Main',
+    hint = hintHowm,
+    config = {
+        hint = {
+            float_opts = { border = 'rounded' }
+        },
+        color = 'blue',
+        invoke_on_body = true,
+        on_enter = function()
+            vim.o.winblend = 20
+        end,
+    },
+    mode = 'n',
+    body = '<leader>m',
+    heads = {
+        { 'c', 'g,c', { remap=true }},
+        { ' ', 'g, ', { remap=true }},
+        { 'l', 'g,l', { remap=true }},
+        { 'g', 'g,g', { remap=true }},
+        { 'q', nil, { exit = true, nowait = true, desc = 'exit' } },
+    }
 })
 end
 
