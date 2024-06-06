@@ -2,7 +2,7 @@ local lazy_require = require('utils').lazy_require
 
 vim.api.nvim_create_autocmd({'User'}, {
     pattern = 'LazyInstall',
-    callback = function(ev)
+    callback = function(_)
         if vim.fn.executable('magick') == 0 then
             vim.notify('To render images in markdown, install ImageMagick(MagicWand)')
         end
@@ -243,7 +243,7 @@ return {
         'nvim-treesitter/nvim-treesitter',
         build = ':TSUpdate',
         event = {'BufReadPost', 'BufNewFile'},
-        commit = '33eb472',
+        -- commit = '33eb472',
         cmd = 'TSUpdateSync',
         config = require('plugins.treesitter').config,
         dependencies = {
@@ -377,7 +377,7 @@ return {
         opts = { auto_restore_enabled = false }
     },
     {
-        'anuvyklack/hydra.nvim',
+        'nvimtools/hydra.nvim',
         keys = require('plugins.hydra').keys,
         config = require('plugins.hydra').config,
         dependencies = {
