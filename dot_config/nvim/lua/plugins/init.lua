@@ -341,10 +341,19 @@ return {
         }
     },
     -- memo
+    -- {
+    --     'fuenor/qfixhowm',
+    --     keys = { 'g,' },
+    --     init = require('plugins.howm').init
+    -- },
     {
-        'fuenor/qfixhowm',
-        keys = { 'g,' },
-        init = require('plugins.howm').init
+        'epwalsh/obsidian.nvim',
+        ft = 'markdown',
+        cmd = {'ObsidianNew', 'ObsidianToday', 'ObsidianDailies', 'ObsidianSearch'},
+        dependencies = {
+            'nvim-lua/plenary.nvim'
+        },
+        opts = require('plugins.obsidian').opt
     },
     -- Library
     {

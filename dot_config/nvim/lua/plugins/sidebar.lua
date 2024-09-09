@@ -29,18 +29,26 @@ local function git_commit_amend()
 end
 
 
-local function save_memo()
+local function save_memo(is_task)
+    local prompt = 'Memo'
+    if is_task then
+        prompt = "Task"
+    end
     vim.ui.input({
-        prompt = 'Memo'
+        prompt = prompt
     },
         function (input)
             if input == nil then
                 return
             end
-            require('plugins.howm').save_memo(input)
+            require('plugins.obsidian').save_memo(input, is_task)
             vim.cmd.SidebarNvimUpdate()
         end
     )
+end
+
+local function save_task()
+    save_memo(true)
 end
 
 
@@ -51,7 +59,7 @@ local memos_section = {
     icon = ' ',
     setup = function(_) end,
     update = function(_)
-        local diary_note = require('plugins.howm').get_diary_path()
+        local diary_note = require('plugins.obsidian').get_diary_path()
         local note_path = vim.fn.strftime(diary_note)
         if vim.fn.filereadable(note_path) == 0 then return end
 
@@ -59,7 +67,7 @@ local memos_section = {
         memos = {}
         for i = #lines, 1, -1 do
             local line = lines[i]
-            if not vim.startswith(line, '- ') then
+            if not vim.startswith(line, '- ') or vim.startswith(line, '- [x]') then
                 goto continue
             end
 
@@ -77,9 +85,15 @@ local memos_section = {
         if #memos ~= 0 then
             body = {}
             for _, v in ipairs(memos) do
+                local is_task = vim.startswith(v, '- [ ]')
                 local memo = string.sub(v, 9)
                 local date = vim.fn.strftime('%Y-%m-%d')
                 local time = string.sub(v, 3, 7)
+                if is_task then
+                    memo = '[ ]'..string.sub(v, 12)
+                    time = string.sub(v, 7, 11)
+                end
+
                 local timestamp = to_superscript(date..' '..time)
                 timestamp = right_align(timestamp, width-3) -- 3: gutter width
 
@@ -96,7 +110,8 @@ local memos_section = {
         return body
     end,
     bindings = {
-        n = save_memo
+        n = function() save_memo(false) end,
+        t = save_task
     }
 }
 

@@ -17,7 +17,7 @@ local hintMain = [[
   ⣴⣶⣤⡤⠦⣤⣀⣤⠆     ⣈⣭⣭⣿⣶⣿⣦⣼⣆         ^ ^           Main Menu
    ⠉⠻⢿⣿⠿⣿⣿⣶⣦⠤⠄⡠⢾⣿⣿⡿⠋⠉⠉⠻⣿⣿⡛⣦       
          ⠈⢿⣿⣟⠦ ⣾⣿⣿⣷⠄⠄⠄⠄⠻⠿⢿⣿⣧⣄     _f_: fuzzy finder      _g_: source control
-          ⣸⣿⣿⢧ ⢻⠻⣿⣿⣷⣄⣀⠄⠢⣀⡀⠈⠙⠿⠄    _m_: qfixmemo          _w_: vimwiki
+          ⣸⣿⣿⢧ ⢻⠻⣿⣿⣷⣄⣀⠄⠢⣀⡀⠈⠙⠿⠄    _m_: memo              _w_: vimwiki
          ⢠⣿⣿⣿⠈  ⠡⠌⣻⣿⣿⣿⣿⣿⣿⣿⣛⣳⣤⣀⣀   _s_: restore session   _l_: LSP
   ⢠⣧⣶⣥⡤⢄ ⣸⣿⣿⠘⠄ ⢀⣴⣿⣿⡿⠛⣿⣿⣧⠈⢿⠿⠟⠛⠻⠿⠄  _d_: draw diagram      _u_: undo tree
  ⣰⣿⣿⠛⠻⣿⣿⡦⢹⣿⣷   ⢊⣿⣿⡏  ⢸⣿⣿⡇ ⢀⣠⣄⣾⠄   _o_: options           _c_: dotfiles
@@ -468,18 +468,21 @@ hydra({
    }
 })
 
-local hintHowm = [[
-^ ^            Howm
+local hintMemo = [[
+^ ^            Memo
 
-_c_: create new     _ _: open diary
-_l_: list memos     _g_: grep search
+_c_: create new     _ _: (space) open diary
+_l_: list MRU       _g_: grep search
 
 _q_: exit
 ]]
 
+local telescope = require('telescope.builtin')
+local memo_path = require('obsidian').get_client().dir.filename
+
 hydra({
     name = 'Main',
-    hint = hintHowm,
+    hint = hintMemo,
     config = {
         hint = {
             float_opts = { border = 'rounded' }
@@ -493,10 +496,10 @@ hydra({
     mode = 'n',
     body = '<leader>m',
     heads = {
-        { 'c', 'g,c', { remap=true }},
-        { ' ', 'g, ', { remap=true }},
-        { 'l', 'g,l', { remap=true }},
-        { 'g', 'g,g', { remap=true }},
+        { 'c', key.cmd('ObsidianNew')},
+        { ' ', key.cmd('ObsidianToday')},
+        { 'l', function()telescope.oldfiles({cwd = memo_path}) end},
+        { 'g', key.cmd('ObsidianSearch')},
         { 'q', nil, { exit = true, nowait = true, desc = 'exit' } },
     }
 })
