@@ -131,6 +131,13 @@ return {
         opts = require('plugins.zenmode').opts,
         dependencies = { 'folke/twilight.nvim' }
     },
+    {
+        'MeanderingProgrammer/markdown.nvim',
+        ft = 'markdown',
+        name = 'render-markdown',
+        dependencies = { 'nvim-treesitter/nvim-treesitter' },
+        opts = {}
+    },
     -- Motion
     {
         'unblevable/quick-scope',
