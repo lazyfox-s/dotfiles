@@ -24,7 +24,8 @@ M.opt = {
         local format = '%Y/%m/%Y-%m-%d-%H%M%S'
         return vim.fn.strftime(format)
     end,
-    new_notes_location = 'notes_subdir'
+    new_notes_location = 'notes_subdir',
+    wiki_link_func = 'use_alias_only'
 }
 
 M.get_diary_path = function ()
