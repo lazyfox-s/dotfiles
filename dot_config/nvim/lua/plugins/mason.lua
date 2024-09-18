@@ -14,7 +14,7 @@ end
 M.config = function()
     setSymbols()
 
-    require('neodev').setup({})
+    -- require('neodev').setup({})
     require("mason").setup({
         ui = {
             icons = {

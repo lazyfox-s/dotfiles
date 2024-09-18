@@ -272,10 +272,15 @@ return {
         event = {'BufReadPre', 'BufNewFile'},
         config = require('plugins.mason').config,
         dependencies = {
-            'folke/neodev.nvim',
+            -- 'folke/neodev.nvim',
             'neovim/nvim-lspconfig',
             'williamboman/mason-lspconfig.nvim'
         }
+    },
+    {
+        "folke/lazydev.nvim",
+        ft = "lua", -- only load on lua files
+        opts = {}
     },
     {
         'neovim/nvim-lspconfig',
