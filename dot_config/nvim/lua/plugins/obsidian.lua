@@ -32,6 +32,11 @@ M.get_diary_path = function ()
     return client:daily_note_path().filename
 end
 
+M.get_workspace_path = function ()
+    local client = require('obsidian').get_client()
+    return client.dir.filename
+end
+
 M.save_memo = function (memo, is_task)
     if memo == nil then
         return

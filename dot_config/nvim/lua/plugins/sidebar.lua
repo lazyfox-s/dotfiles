@@ -1,5 +1,6 @@
 local lazy_require = require('utils').lazy_require
 local memos_section = require('plugins.sidebar_memos')
+local task_section = require('plugins.sidebar_tasks')
 
 local M = {}
 
@@ -61,6 +62,7 @@ M.config = function()
             'git',
             'diagnostics',
             memos_section,
+            task_section,
             'files',
             'containers'
         },
