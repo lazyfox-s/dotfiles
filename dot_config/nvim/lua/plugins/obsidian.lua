@@ -1,5 +1,35 @@
 local M = {}
 
+local function update_frontmatter(_, note)
+    local format = '%Y-%m-%d %H:%M'
+    local created = vim.fn.strftime(format)
+    local modified = created
+    local frontmatter = note:frontmatter()
+
+    if frontmatter.created ~= nil then
+        created = frontmatter.created
+    end
+
+    local new_frontmatter = {
+        created = created,
+        modified = modified
+    }
+
+    local tags = frontmatter.tags
+    if tags ~= nil and #tags >= 1 then
+        new_frontmatter.tags = tags
+    end
+
+    local aliases = frontmatter.aliases
+    if aliases ~= nil and #aliases >= 1 then
+        new_frontmatter.aliases = aliases
+    end
+
+    note:save_to_buffer({
+        frontmatter = new_frontmatter
+    })
+end
+
 
 M.opt = {
     workspaces = {
@@ -24,6 +54,9 @@ M.opt = {
         local format = '%Y/%m/%Y-%m-%d-%H%M%S'
         return vim.fn.strftime(format)
     end,
+    callbacks = {
+        pre_write_note = update_frontmatter
+    },
     new_notes_location = 'notes_subdir',
     wiki_link_func = 'use_alias_only'
 }
