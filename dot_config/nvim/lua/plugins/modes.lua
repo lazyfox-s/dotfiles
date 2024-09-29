@@ -4,11 +4,11 @@ require('modes').setup({
         copy = "#f5c359",
         delete = "#c75c6a",
         insert = "#78ccc5",
-        visual = "#9745be",
+        visual = "#be95ff",
     },
 
     -- Set opacity for cursorline and number background
-    line_opacity = 0.15,
+    line_opacity = 0.3,
 
     -- Enable cursor highlights
     set_cursor = true,
