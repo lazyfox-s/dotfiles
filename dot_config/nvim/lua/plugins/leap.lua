@@ -32,6 +32,9 @@ M.config = function()
     vim.api.nvim_set_hl(0, 'LeapLabelSecondary', {
     fg = 'cyan', bold = true, nocombine = true,
     })
+    vim.api.nvim_set_hl(0, 'LeapLabel', {
+        link = 'LeapLabelPrimary'
+    })
     require('leap').opts.highlight_unlabeled_phase_one_targets = true
 end
 
