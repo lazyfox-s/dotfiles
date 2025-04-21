@@ -50,7 +50,7 @@ function ranger
 end
 
 function lk
-    set loc (walk --icons $argv); and cd $loc;
+    set loc (walk --icons --fuzzy $argv); and cd $loc;
 end
 
 zoxide init fish | source
