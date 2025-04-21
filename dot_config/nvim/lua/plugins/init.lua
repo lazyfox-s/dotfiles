@@ -116,7 +116,13 @@ return {
         end,
         opts = {
             -- max_width_window_percentage = 25,
-            max_height_window_percentage = 10
+            max_height_window_percentage = 15,
+            integrations = {
+                markdown = {
+                    only_render_image_at_cursor = true,
+                    floating_window = false
+                }
+            }
         },
         dependencies = { 'leafo/magick' }
     },
@@ -136,7 +142,18 @@ return {
         ft = 'markdown',
         name = 'render-markdown',
         dependencies = { 'nvim-treesitter/nvim-treesitter' },
-        opts = {}
+        opts = {
+            heading = {
+                width = 'block',
+                border = false,
+                border_virtual = true,
+                border_prefix = false
+            },
+            bullet = {
+                icons = { '◇', '', ''},
+                right_pad = 0
+            }
+        }
     },
     -- Motion
     {

@@ -43,6 +43,9 @@ M.opt = {
         date_format = '%Y/%m/%Y-%m-%d-000000',
         template = 'DairyNoteTemplate.md'
     },
+    attachments = {
+        img_folder = 'assets/imgs'
+    },
     disable_frontmatter = true,
     templates = {
         folder = 'template'
@@ -58,7 +61,8 @@ M.opt = {
         pre_write_note = update_frontmatter
     },
     new_notes_location = 'notes_subdir',
-    wiki_link_func = 'use_alias_only'
+    wiki_link_func = 'use_alias_only',
+    ui = { enable = false }
 }
 
 M.get_diary_path = function ()
