@@ -285,13 +285,14 @@ return {
         opts = {}
     },
     { --- lsp
-        'williamboman/mason.nvim',
+        'mason-org/mason.nvim',
         event = {'BufReadPre', 'BufNewFile'},
         config = require('plugins.mason').config,
+        version = "^1.0.0",
         dependencies = {
             -- 'folke/neodev.nvim',
             'neovim/nvim-lspconfig',
-            'williamboman/mason-lspconfig.nvim'
+            {'mason-org/mason-lspconfig.nvim', version = "^1.0.0"}
         }
     },
     {

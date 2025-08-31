@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN localedef -f UTF-8 -i ja_JP ja_JP && localedef -f UTF-8 -i en_US en_US
 
-RUN groupadd -g 1000 ${USERNAME} \
+RUN groupadd ${USERNAME} \
 	&& useradd -g ${USERNAME} -G sudo -m ${USERNAME} \
 	&& echo "${USERNAME}:${USERNAME}" | chpasswd
 

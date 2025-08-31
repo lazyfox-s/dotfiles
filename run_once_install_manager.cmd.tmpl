@@ -15,11 +15,11 @@ else
 fi
 
 cd {{.chezmoi.sourceDir}}
-type brew > /dev/null 2>&1 && brew bundle --no-lock
+type brew > /dev/null 2>&1 && brew bundle 
 
 cd ~
 # install runtime via rtx
-rtx install
+mise install
 
 # fish plugin settings
 fish -c "type fisher" > /dev/null 2>&1 || fish -c "curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source\
