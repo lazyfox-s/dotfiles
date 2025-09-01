@@ -59,9 +59,9 @@ return {
     },
     {
         'j-hui/fidget.nvim',
-        tag = 'legacy',
+        -- tag = 'legacy',
         dependencies = { 'nvim-tree/nvim-web-devicons' },
-        opts = {window = {blend = 0}}
+        opts = { notification = {window = {winblend = 0}}}
     },
     {
         'lukas-reineke/indent-blankline.nvim',
