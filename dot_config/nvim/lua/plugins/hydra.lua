@@ -366,6 +366,17 @@ option_func.breadcrumbs = function ()
     end
 end
 
+option_func.codecompanion = function()
+    local windows = vim.api.nvim_list_wins()
+    for i = 1, #windows do
+        local buf = vim.api.nvim_win_get_buf(windows[i])
+        if vim.api.nvim_get_option_value('filetype', {buf = buf}) == 'codecompanion' then
+            return '[x]'
+        end
+    end
+    return '[ ]'
+end
+
 -- local sidebar = require('sidebar-nvim')
 local terminal = require('toggleterm')
 
@@ -379,6 +390,7 @@ _r_ %{relative} relative number
 _p_ %{spell} spell
 _w_ %{breadcrumbs} breadcrumbs
 _t_ %{terminal} terminal
+_c_ %{codecompanion} CodeCompanion
 
 _q_ quit
 ]]
@@ -429,6 +441,7 @@ hydra({
                 vim.o.spell = true
             end
         end},
+        { 'c', key.cmd('CodeCompanionChat Toggle'), { exit = true }},
         { 't', terminal.toggle_command, { exit = true }},
         { 'w', key.cmd('Lspsaga winbar_toggle'), { exit = true }},
         { 'q', nil, { exit = true, nowait = true, desc = 'exit' } },

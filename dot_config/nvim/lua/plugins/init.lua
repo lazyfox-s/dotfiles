@@ -346,6 +346,18 @@ return {
             'hrsh7th/cmp-nvim-lsp-signature-help'
         },
     },
+    -- AI
+    {
+        'olimorris/codecompanion.nvim',
+        opts = require('plugins.codecompanion').opts,
+        init = require('plugins.codecompanion').init,
+        cmd = { 'CodeCompanion', 'CodeCompanionActions', 'CodeCompanionChat' },
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            'nvim-treesitter/nvim-treesitter',
+            'j-hui/fidget.nvim'
+        }
+    },
     -- Source Control
     {
         'lewis6991/gitsigns.nvim',
