@@ -29,14 +29,14 @@ M.config = function()
     local function runtask(opts)
         local cmd = opts.args
         local start = function(_)
-            vim.notify('Running `'..cmd..'`...' , 'info', {title = title})
+            vim.notify('Running `'..cmd..'`...' , vim.log.levels.INFO, {title = title})
         end
 
         local cmd_exited = function(_, _, code, _)
-            local status = 'error'
+            local status = vim.log.levels.ERROR
             local opt = {title = title}
             if code == 0 then
-                status = 'info'
+                status = vim.log.levels.INFO
                 opt.icon = ' '
             end
             vim.notify('Exited `'..cmd..'` (code: '..code..')', status, opt)

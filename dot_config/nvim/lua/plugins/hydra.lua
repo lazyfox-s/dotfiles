@@ -210,12 +210,11 @@ local hintGit = [[
 _l_: lazygit        _s_: status
 
 _<_: stage hunk     _>_: reset hunk
-_u_: undo stage
 _S_: stage buffer   _R_: reset buffer
 
 _n_: next hunk      _p_: prev hunk
 
-_d_: diff this      _v_: preview hunk
+_d_: preview hunk   _D_: diff this
 
 ^ ^                 _q_: exit
 ]]
@@ -242,13 +241,12 @@ hydra({
         { 's', ':GinStatus<CR>', { exit = true }},
         { '<', ':Gitsigns stage_hunk<CR>'},
         { '>', ':Gitsigns reset_hunk<CR>' },
-        { 'u', gs.undo_stage_hunk },
         { 'S', gs.stage_buffer},
         { 'R', gs.reset_buffer},
-        { 'd', gs.diffthis},
-        { 'v', gs.preview_hunk},
-        { 'n', gs.next_hunk },
-        { 'p', gs.prev_hunk },
+        { 'D', gs.diffthis},
+        { 'd', gs.preview_hunk},
+        { 'n', key.cmd('Gitsigns nav_hunk next') },
+        { 'p', key.cmd('Gitsigns nav_hunk prev') },
         { 'q', nil, { exit = true, nowait = true, desc = 'exit' } },
     }
 })
