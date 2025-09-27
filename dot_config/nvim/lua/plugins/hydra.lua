@@ -19,9 +19,9 @@ local hintMain = [[
          ⠈⢿⣿⣟⠦ ⣾⣿⣿⣷⠄⠄⠄⠄⠻⠿⢿⣿⣧⣄     _f_: fuzzy finder      _g_: source control
           ⣸⣿⣿⢧ ⢻⠻⣿⣿⣷⣄⣀⠄⠢⣀⡀⠈⠙⠿⠄    _m_: memo              _w_: vimwiki
          ⢠⣿⣿⣿⠈  ⠡⠌⣻⣿⣿⣿⣿⣿⣿⣿⣛⣳⣤⣀⣀   _s_: restore session   _l_: LSP
-  ⢠⣧⣶⣥⡤⢄ ⣸⣿⣿⠘⠄ ⢀⣴⣿⣿⡿⠛⣿⣿⣧⠈⢿⠿⠟⠛⠻⠿⠄  _d_: draw diagram      _u_: undo tree
- ⣰⣿⣿⠛⠻⣿⣿⡦⢹⣿⣷   ⢊⣿⣿⡏  ⢸⣿⣿⡇ ⢀⣠⣄⣾⠄   _o_: options           _c_: dotfiles
-⣠⣿⠿⠛⠄⢀⣿⣿⣷⠘⢿⣿⣦⡀ ⢸⢿⣿⣿⣄ ⣸⣿⣿⡇⣪⣿⡿⠿⣿⣷⡄  _t_: toggle term
+  ⢠⣧⣶⣥⡤⢄ ⣸⣿⣿⠘⠄ ⢀⣴⣿⣿⡿⠛⣿⣿⣧⠈⢿⠿⠟⠛⠻⠿⠄  _D_: draw diagram      _u_: undo tree
+ ⣰⣿⣿⠛⠻⣿⣿⡦⢹⣿⣷   ⢊⣿⣿⡏  ⢸⣿⣿⡇ ⢀⣠⣄⣾⠄   _o_: options           _d_: dotfiles
+⣠⣿⠿⠛⠄⢀⣿⣿⣷⠘⢿⣿⣦⡀ ⢸⢿⣿⣿⣄ ⣸⣿⣿⡇⣪⣿⡿⠿⣿⣷⡄  _t_: toggle term       _c_: copilot
 ⠙⠃   ⣼⣿⡟  ⠈⠻⣿⣿⣦⣌⡇⠻⣿⣿⣷⣿⣿⣿ ⣿⣿⡇⠄⠛⠻⢷⣄ 
      ⢻⣿⣿⣄   ⠈⠻⣿⣿⣿⣷⣿⣿⣿⣿⣿⡟ ⠫⢿⣿⡆     _q_: exit
       ⠻⣿⣿⣿⣿⣶⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⡟⢀⣀⣤⣾⡿⠃     
@@ -55,8 +55,9 @@ hydra({
         { 'o', '<leader>o', { remap = true } },
         { 'u', key.cmd('UndotreeToggle')},
         { 't', key.cmd('ToggleTerm')},
-        { 'd', '<leader>d', { remap = true } },
-        { 'c', key.cmd('Telescope find_files prompt_title=dotfiles cwd=$HOME/.local/share/chezmoi')},
+        { 'c', '<leader>d', { remap = true } },
+        { 'D', '<leader>D', { remap = true } },
+        { 'd', key.cmd('Telescope find_files prompt_title=dotfiles cwd=$HOME/.local/share/chezmoi')},
         { 'q', nil, { exit = true, nowait = true, desc = 'exit' } },
     }
 })
@@ -468,7 +469,7 @@ hydra({
         end,
    },
    mode = 'n',
-   body = '<leader>d',
+   body = '<leader>D',
    heads = {
       { 'H', '<C-v>h:VBox<CR>' },
       { 'J', '<C-v>j:VBox<CR>' },
@@ -477,6 +478,49 @@ hydra({
       { 'f', ':VBox<CR>', { mode = 'v' }},
       { '<Esc>', nil, { exit = true } },
    }
+})
+
+local hintCopilot = [[
+^ ^         Copilot
+        GitHub Copilot
+_a_: attach       _d_: detach
+_A_: attach force
+_s_: status 
+
+            Chat
+_c_: toggle chat
+_i_: inline assistant
+_p_: action pallette
+
+
+_q_: exit
+]]
+
+hydra({
+        name = 'Copilot',
+        hint = hintCopilot,
+        config = {
+            hint = {
+                float_opts = { border = 'rounded' }
+            },
+            color = 'blue',
+            invoke_on_body = true,
+            on_enter = function()
+                vim.o.winblend = 20
+            end,
+        },
+        mode = 'n',
+        body = '<leader>d',
+        heads = {
+            { 'a', key.cmd('Copilot attach')},
+            { 'A', key.cmd('Copilot! attach')},
+            { 'd', key.cmd('Copilot detach')},
+            { 's', key.cmd('Copilot status')},
+            { 'c', key.cmd('CodeCompanionChat Toggle')},
+            { 'i', key.cmd('CodeCompanion')},
+            { 'p', key.cmd('CodeCompanionActions')},
+            { 'q', nil, { exit = true, nowait = true, desc = 'exit' } },
+        }
 })
 
 local hintMemo = [[

@@ -50,7 +50,8 @@ M.config = function()
             { name = 'vsnip' },
             { name = 'path' },
             { name = 'emoji' },
-            { name = 'calc' }
+            { name = 'calc' },
+            { name = 'copilot' },
         }, {
             { name = 'buffer' }
         }),

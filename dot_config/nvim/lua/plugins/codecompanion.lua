@@ -38,7 +38,7 @@ M.opts = {
     },
     strategies = {
         chat = {
-            adapter = 'ollama_codegemma',
+            adapter = 'copilot',
             roles = {
                 llm = function(adapter)
                     return '󱙺  CodeCompanion ('..adapter.formatted_name..')'
@@ -47,10 +47,10 @@ M.opts = {
             },
         },
         inline = {
-            adapter = 'ollama_codegemma'
+            adapter = 'copilot'
         },
         agent = {
-            adapter = 'ollama_codegemma'
+            adapter = 'copilot'
         },
     },
     display = {

@@ -1,7 +1,10 @@
 local config = function()
+local lazy_require = require('utils').lazy_require
 
 local nightfox_conf = require("nightfox.config")
 nightfox_conf.options.transparent = false
+
+local copilot = lazy_require("copilot.client")
 
 local function getFileTime()
     local file = vim.fn.expand('%')
@@ -28,6 +31,22 @@ local function getSkkMode()
     return ''
 end
 
+local function getCopilotStatus()
+    if package.loaded['copilot'] == nil then
+        return ''
+    end
+
+    if copilot.is_disabled() then
+        return '  Disabled'
+    end
+
+    if copilot.buf_is_attached(vim.api.nvim_get_current_buf()) then
+        return '  Attached'
+    else
+        return '  Detached'
+    end
+end
+
 require('lualine').setup({
     options = {
         theme = 'carbonfox',
@@ -51,7 +70,8 @@ require('lualine').setup({
                     function() return '󰒲 '..require('lazy.status').updates() end,
                     cond = require('lazy.status').has_updates,
                     color = {fg = '#ee5396'}
-                }
+                },
+                getCopilotStatus,
             },
         lualine_y = {
             {'encoding', icon=''},
