@@ -480,13 +480,17 @@ return {
         'thinca/vim-partedit',
         cmd = 'Partedit'
     },
+--    {
+--        'AckslD/nvim-neoclip.lua',
+--        cmd = 'Telescope',
+--        event = 'TextYankPost',
+--        dependencies = {
+--            'nvim-telescope/telescope.nvim'
+--        },
+--        opts = {}
+--    },
     {
-        'AckslD/nvim-neoclip.lua',
-        command = 'Telescope',
-        event = 'TextYankPost',
-        dependencies = {
-            'nvim-telescope/telescope.nvim'
-        },
-        opts = {}
+        'lambdalisue/vim-suda',
+        cmd = {'SudaRead', 'SudaWrite'}
     }
 }
