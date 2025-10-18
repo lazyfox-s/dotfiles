@@ -22,7 +22,6 @@ local function update_loclist()
 
     vim.system({'rg', '--no-hidden', '--column', '--sortr', 'path', '--', '^- \\[ \\]', search_path}, {cwd='/'}, function(obj)
         if obj.code ~= 0 then
-            vim.notify(obj.stderr)
             return
         end
 

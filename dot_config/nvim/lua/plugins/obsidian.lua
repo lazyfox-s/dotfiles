@@ -31,39 +31,47 @@ local function update_frontmatter(_, note)
 end
 
 
-M.opt = {
-    workspaces = {
-        {
-            name = 'personal',
-            path = '~/Documents/howm'
-        }
-    },
-    notes_subdir = '',
-    daily_notes = {
-        date_format = '%Y/%m/%Y-%m-%d-000000',
-        template = 'DairyNoteTemplate.md'
-    },
-    attachments = {
-        img_folder = 'assets/imgs'
-    },
-    disable_frontmatter = true,
-    templates = {
-        folder = 'template'
-    },
-    note_id_func = function(title)
-        if title ~= nil then
-            return 'notes/'..title
-        end
-        local format = '%Y/%m/%Y-%m-%d-%H%M%S'
-        return vim.fn.strftime(format)
-    end,
-    callbacks = {
-        pre_write_note = update_frontmatter
-    },
-    new_notes_location = 'notes_subdir',
-    wiki_link_func = 'use_alias_only',
-    ui = { enable = false }
-}
+M.config = function ()
+    local work_path = '~/Documents/howm'
+
+    if vim.fn.filereadable(work_path) == 0 then
+        vim.fn.mkdir(vim.fn.fnamemodify(work_path, ':p'), 'p')
+    end
+
+    require('obsidian').setup({
+        workspaces = {
+            {
+                name = 'personal',
+                path = work_path
+            }
+        },
+        notes_subdir = '',
+        daily_notes = {
+            date_format = '%Y/%m/%Y-%m-%d-000000',
+            template = 'DairyNoteTemplate.md'
+        },
+        attachments = {
+            img_folder = 'assets/imgs'
+        },
+        disable_frontmatter = true,
+        templates = {
+            folder = 'template'
+        },
+        note_id_func = function(title)
+            if title ~= nil then
+                return 'notes/'..title
+            end
+            local format = '%Y/%m/%Y-%m-%d-%H%M%S'
+            return vim.fn.strftime(format)
+        end,
+        callbacks = {
+            pre_write_note = update_frontmatter
+        },
+        new_notes_location = 'notes_subdir',
+        wiki_link_func = 'use_alias_only',
+        ui = { enable = false }
+    })
+end
 
 M.get_diary_path = function ()
     local client = require('obsidian').get_client()

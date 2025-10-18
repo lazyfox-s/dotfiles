@@ -412,7 +412,7 @@ return {
         dependencies = {
             'nvim-lua/plenary.nvim'
         },
-        opts = require('plugins.obsidian').opt
+        config = require('plugins.obsidian').config
     },
     -- Library
     {
