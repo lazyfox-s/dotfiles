@@ -8,9 +8,9 @@
 [interactive]
     diffFilter = delta --coloer-only
 [alias]
-	slog = ! git log --oneline --color -10 && git rev-parse HEAD~10 > /dev/null 2>&1 && echo "+"$(git rev-list --count HEAD~10)" commits"
+	slog = ! git log --oneline --first-parent --color -10 && git rev-parse HEAD~10 > /dev/null 2>&1 && echo "+"$(git rev-list --count HEAD~10)" commits"
 	glog = log --graph --color --oneline
-    pushf = push --force-with-lease
+    pushf = push --force-with-lease --force-if-includes
 [color]
 	ui = true
 [merge]
@@ -28,6 +28,9 @@
 	default = simple
 [pull]
 	ff = only
+    autostash = true
+[rebase]
+    autostash = true
 [init]
 	defaultBranch = main
 [delta]
