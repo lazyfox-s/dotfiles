@@ -5,6 +5,7 @@ local nightfox_conf = require("nightfox.config")
 nightfox_conf.options.transparent = false
 
 local copilot = lazy_require("copilot.client")
+local copilot_auth = lazy_require("copilot.auth")
 
 local function getFileTime()
     local file = vim.fn.expand('%')
@@ -34,6 +35,10 @@ end
 local function getCopilotStatus()
     if package.loaded['copilot'] == nil then
         return ''
+    end
+
+    if not copilot_auth.is_authenticated() then
+        return '  Not authenticated'
     end
 
     if copilot.is_disabled() then
