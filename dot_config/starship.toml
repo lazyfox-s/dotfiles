@@ -9,7 +9,6 @@ $fill\
 $shell\
 $shlvl\
 $docker_context\
-$memory_usage\
 $time\
 $cmd_duration\
 $line_break\
