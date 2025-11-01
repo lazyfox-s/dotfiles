@@ -1,0 +1,55 @@
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+                color_bg           "#181825"
+                color_bg_active    "#525253"
+                color_fg_active    "#f2f4f8"
+                color_fg           "#6C7086"
+
+                format_left   "{tabs}"
+                format_center "{mode}"
+                format_right  "#[fg=$bg]{command_cpu}#[bg=$bg] {command_mem}#[fg=$bg] {datetime}"
+                format_space  ""
+
+                border_enabled  "false"
+                border_char     "─"
+                border_format   "#[fg=#6C7086]{char}"
+                border_position "bottom"
+
+                hide_frame_for_single_pane "false"
+
+                mode_locked  ""
+                mode_normal  "#[fg=$fg_dim] {name}: [c] New Tab  [v] V-Split  [h] H-Split  [s] Scroll  [o] Session"
+                mode_pane    "#[fg=$fg_dim] {name}: [c] Rename  [n][d][r][s] New pane (new, down, right, stacked)"
+                mode_tab     "#[fg=$fg_dim] {name}: [b] Brake pane  [n] New  [r] Rename  [x] Close"
+                mode_resize  "#[fg=$fg_dim] {name}: [H][J][K][L] Decrease  [h][j][k][l] Increase"
+                mode_move    "#[fg=$fg_dim] {name}: [h][j][k][l] Move pane"
+                mode_scroll  "#[fg=$fg_dim] {name}: [e] Edit scroll back  [f] Search"
+                mode_search  "#[fg=$fg_dim] {name}: [c][o][w] Toggle Option (CaseSensitivity, WholeWord, Wrap)"
+                mode_session "#[fg=$fg_dim] {name}: [a] About  [c] Configuration  [d] Detach  [p] Plugin  [s] Share  [w] Session manager"
+                mode_default_to_mode "locked"
+
+                tab_separator " "
+                tab_normal   "#[fg=$bg]#[bg=$bg,fg=$fg]󰟙 {index}#[fg=$bg]"
+                tab_active   "#[fg=$bg_active]#[bg=$bg_active,fg=$fg_active,bold] {index}#[fg=$bg_active]"
+
+                datetime        "#[fg=$bg]#[bg=$bg,fg=$fg]{format}#[fg=$bg]"
+                datetime_format "%y-%m-%d (%a) %H:%M"
+                datetime_timezone "Asia/Tokyo"
+
+                command_mem_command    "fish -c ~/.config/zellij/command/mem_used.fish"
+                command_mem_format     "#[bg=$bg,fg=$fg] {stdout}"
+                command_mem_interval   "5"
+                command_mem_rendermode "static"
+
+                command_cpu_command    "fish -c ~/.config/zellij/command/cpu_used.fish"
+                command_cpu_format     "#[bg=$bg,fg=$fg] {stdout}"
+                command_cpu_interval   "5"
+                command_cpu_rendermode "static"
+
+            }
+        }
+        children
+    }
+}
