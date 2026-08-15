@@ -10,7 +10,7 @@ local function git_commit()
     },
         function (input)
             if input == nil then
-                vim.notify('commit canceled')
+                vim.notify('commit canceled', vim.log.levels.WARN)
                 return
             end
 
