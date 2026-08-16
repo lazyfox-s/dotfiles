@@ -5,3 +5,5 @@ flutter latest
 dart    latest
 cmake   latest
 ninja   latest
+golang  latest
+npm     latest
