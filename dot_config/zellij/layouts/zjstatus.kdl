@@ -20,7 +20,7 @@ layout {
                 hide_frame_for_single_pane "false"
 
                 mode_locked  ""
-                mode_normal  "#[fg=$fg_dim] {name}: [c] New Tab  [v] V-Split  [h] H-Split  [s] Scroll  [o] Session"
+                mode_normal  "#[fg=$fg_dim] {name}: [c] New Tab  [v] V-Split  [h] H-Split  [s] Scroll  [o] Session [j] Input from nvim [l] Lazygit"
                 mode_pane    "#[fg=$fg_dim] {name}: [c] Rename  [n][d][r][s] New pane (new, down, right, stacked)"
                 mode_tab     "#[fg=$fg_dim] {name}: [b] Brake pane  [n] New  [r] Rename  [x] Close"
                 mode_resize  "#[fg=$fg_dim] {name}: [H][J][K][L] Decrease  [h][j][k][l] Increase"

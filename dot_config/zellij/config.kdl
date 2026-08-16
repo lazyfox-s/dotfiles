@@ -16,6 +16,17 @@ keybinds clear-defaults=true {
             }
             SwitchToMode "locked";
         }
+        bind "l" {
+            Run "lazygit" {
+                floating true
+                close_on_exit true
+                x "10%"
+                y "10%"
+                width "80%"
+                height "80%"
+            }
+            SwitchToMode "locked";
+        }
     }
     pane {
         bind "left" { MoveFocus "left"; }
