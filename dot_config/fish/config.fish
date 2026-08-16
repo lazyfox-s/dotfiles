@@ -13,6 +13,8 @@ fish_vi_key_bindings
 alias ls 'eza --icons --git --time-style relative'
 alias cat 'bat'
 alias vim 'nvim'
+alias grep 'rg --color=auto'
+alias chezmoi-cd 'cd (chezmoi source-path)'
 
 abbr -a ll ls -l
 abbr -a la ls -la
