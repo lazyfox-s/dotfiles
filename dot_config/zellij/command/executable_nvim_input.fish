@@ -1,0 +1,16 @@
+#!/usr/bin/env fish
+# Command input from nvim to zellij.
+
+set tmpfile (mktemp /tmp/nvim_input.XXXXXX)
+
+# 1. nvim で編集 (filetype: cmd_input)
+nvim -c "set filetype=cmd_input nonumber norelativenumber laststatus=0 showtabline=0 signcolumn=no noruler" +startinsert "$tmpfile"
+
+# 2. 編集内容があれば、バックグラウンドで元のペインへ送信
+if test -f "$tmpfile" -a -s "$tmpfile"
+    # setsid を使用して独立プロセスとして実行
+    setsid -f timeout 3s fish -c 'sleep 0.15; zellij action write-chars -- (cat "$argv[1]" | string collect) 2>>/tmp/nvim_input_error.log; rm -f "$argv[1]"' "$tmpfile" </dev/null >/dev/null 2>&1
+else
+    rm -f "$tmpfile"
+end
+
