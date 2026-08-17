@@ -12,7 +12,7 @@
   "cmp-nvim-lsp": { "branch": "main", "commit": "cbc7b02bb99fae35cb42f514762b89b5126651ef" },
   "cmp-nvim-lsp-signature-help": { "branch": "main", "commit": "fd3e882e56956675c620898bf1ffcf4fcbe7ec84" },
   "cmp-path": { "branch": "main", "commit": "c642487086dbd9a93160e1679a1327be111cbc25" },
-  "cmp-skkeleton": { "branch": "main", "commit": "ae74491bc73b868c60f69e4362d3bea29a6bf74d" },
+  "cmp-skkeleton": { "branch": "main", "commit": "2c268a407e9e843abd03c6fa77485541a4ddcd9a" },
   "cmp-vsnip": { "branch": "main", "commit": "989a8a73c44e926199bfd05fa7a516d51f2d2752" },
   "codecompanion.nvim": { "branch": "main", "commit": "9a8e8602a7c72d10a827880fbb6fcd8bfa3830c7" },
   "committia.vim": { "branch": "master", "commit": "c8c0f255e8090ed90dd9d5dd2e8672994f8e3671" },

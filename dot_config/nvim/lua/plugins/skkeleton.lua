@@ -27,6 +27,15 @@ M.init = function()
         group = 'skkeleton-initialize-pre',
         callback = skkelton_init
     })
+    vim.api.nvim_create_autocmd('User', {
+        pattern = 'skkeleton-handled',
+        callback = function()
+            local ok, cmp = pcall(require, 'cmp')
+            if ok then
+                cmp.complete()
+            end
+        end,
+    })
 end
 
 M.keys = {

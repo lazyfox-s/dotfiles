@@ -349,7 +349,7 @@ return {
             'hrsh7th/cmp-emoji',
             'hrsh7th/cmp-calc',
             'onsails/lspkind.nvim',
-            {'rinx/cmp-skkeleton', dependencies = {'vim-skk/skkeleton'}},
+            {'uga-rosa/cmp-skkeleton', dependencies = {'vim-skk/skkeleton'}},
             'hrsh7th/cmp-nvim-lsp-signature-help',
             "zbirenbaum/copilot-cmp"
         },
