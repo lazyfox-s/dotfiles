@@ -1,0 +1,310 @@
+#!/usr/bin/env python3
+"""
+agent-memory: Project-crossing memory and knowledge management CLI for AI agents & humans.
+"""
+
+import argparse
+import datetime
+import json
+import os
+import pathlib
+import sqlite3
+import sys
+from typing import Any, Dict, List, Optional
+
+# Default paths
+DEFAULT_BASE_DIR = pathlib.Path.home() / ".local" / "share" / "agent-memory"
+DEFAULT_DB_PATH = DEFAULT_BASE_DIR / "memory.db"
+DEFAULT_DOCS_PATH = DEFAULT_BASE_DIR / "docs"
+
+
+def get_db_path() -> pathlib.Path:
+    env_path = os.environ.get("AGENT_MEMORY_DB")
+    if env_path:
+        return pathlib.Path(env_path).expanduser().resolve()
+    return DEFAULT_DB_PATH
+
+
+def get_docs_path() -> pathlib.Path:
+    env_path = os.environ.get("AGENT_MEMORY_DOCS")
+    if env_path:
+        return pathlib.Path(env_path).expanduser().resolve()
+    return DEFAULT_DOCS_PATH
+
+
+def init_db(conn: sqlite3.Connection) -> None:
+    """Initialize database tables, indexes, and FTS5 virtual table."""
+    with conn:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                created_at TEXT NOT NULL,
+                project TEXT NOT NULL,
+                title TEXT NOT NULL,
+                details TEXT,
+                tags TEXT,
+                status TEXT DEFAULT 'info'
+            );
+            """
+        )
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_logs_project ON logs(project);")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_logs_created_at ON logs(created_at);")
+
+        # FTS5 for full-text search
+        conn.execute(
+            """
+            CREATE VIRTUAL TABLE IF NOT EXISTS logs_fts USING fts5(
+                title,
+                details,
+                tags,
+                project,
+                content='logs',
+                content_rowid='id'
+            );
+            """
+        )
+        # Triggers to keep FTS index synced
+        conn.execute(
+            """
+            CREATE TRIGGER IF NOT EXISTS logs_ai AFTER INSERT ON logs BEGIN
+                INSERT INTO logs_fts(rowid, title, details, tags, project)
+                VALUES (new.id, new.title, coalesce(new.details, ''), coalesce(new.tags, ''), new.project);
+            END;
+            """
+        )
+        conn.execute(
+            """
+            CREATE TRIGGER IF NOT EXISTS logs_ad AFTER DELETE ON logs BEGIN
+                INSERT INTO logs_fts(logs_fts, rowid, title, details, tags, project)
+                VALUES('delete', old.id, old.title, coalesce(old.details, ''), coalesce(old.tags, ''), old.project);
+            END;
+            """
+        )
+        conn.execute(
+            """
+            CREATE TRIGGER IF NOT EXISTS logs_au AFTER UPDATE ON logs BEGIN
+                INSERT INTO logs_fts(logs_fts, rowid, title, details, tags, project)
+                VALUES('delete', old.id, old.title, coalesce(old.details, ''), coalesce(old.tags, ''), old.project);
+                INSERT INTO logs_fts(rowid, title, details, tags, project)
+                VALUES (new.id, new.title, coalesce(new.details, ''), coalesce(new.tags, ''), new.project);
+            END;
+            """
+        )
+
+
+def get_connection() -> sqlite3.Connection:
+    db_path = get_db_path()
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(str(db_path))
+    conn.row_factory = sqlite3.Row
+    init_db(conn)
+    return conn
+
+
+def cmd_record(args: argparse.Namespace) -> None:
+    details = args.details
+    if not details and not sys.stdin.isatty():
+        details = sys.stdin.read().strip()
+
+    created_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    project = args.project.strip() if args.project else "global"
+    title = args.title.strip()
+    tags = args.tags.strip() if args.tags else ""
+    status = args.status.strip() if args.status else "info"
+
+    conn = get_connection()
+    with conn:
+        cursor = conn.execute(
+            """
+            INSERT INTO logs (created_at, project, title, details, tags, status)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (created_at, project, title, details, tags, status),
+        )
+        record_id = cursor.lastrowid
+
+    print(f"Recorded memory [ID: {record_id}] for project '{project}' (status: {status})")
+
+
+def cmd_search(args: argparse.Namespace) -> None:
+    conn = get_connection()
+    query = args.query.strip() if args.query else ""
+    limit = max(1, args.limit)
+
+    results: List[Dict[str, Any]] = []
+
+    try:
+        if query:
+            escaped_query = query.replace('"', '""')
+            safe_query = f'"{escaped_query}"'
+            sql = """
+                SELECT l.id, l.created_at, l.project, l.title, l.details, l.tags, l.status
+                FROM logs l
+                JOIN logs_fts f ON l.id = f.rowid
+                WHERE logs_fts MATCH ?
+            """
+            params: List[Any] = [safe_query]
+        else:
+            sql = "SELECT id, created_at, project, title, details, tags, status FROM logs WHERE 1=1"
+            params = []
+
+        if args.project:
+            sql += " AND project = ?"
+            params.append(args.project.strip())
+
+        if args.tags:
+            tag_list = [t.strip() for t in args.tags.split(",") if t.strip()]
+            for t in tag_list:
+                sql += " AND tags LIKE ?"
+                params.append(f"%{t}%")
+
+        sql += " ORDER BY id DESC LIMIT ?"
+        params.append(limit)
+
+        cursor = conn.execute(sql, params)
+        rows = cursor.fetchall()
+        for row in rows:
+            results.append(dict(row))
+    except sqlite3.OperationalError:
+        # Fallback to LIKE if FTS fails
+        sql = """
+            SELECT id, created_at, project, title, details, tags, status
+            FROM logs
+            WHERE (title LIKE ? OR details LIKE ? OR tags LIKE ? OR project LIKE ?)
+        """
+        like_pattern = f"%{query}%"
+        params = [like_pattern, like_pattern, like_pattern, like_pattern]
+        if args.project:
+            sql += " AND project = ?"
+            params.append(args.project.strip())
+        sql += " ORDER BY id DESC LIMIT ?"
+        params.append(limit)
+
+        cursor = conn.execute(sql, params)
+        for row in cursor.fetchall():
+            results.append(dict(row))
+
+    if args.format == "json":
+        print(json.dumps(results, ensure_ascii=False, indent=2))
+        return
+
+    if not results:
+        print("No matching memories found.")
+        return
+
+    print(f"Found {len(results)} memory entries:")
+    for r in results:
+        date_str = r["created_at"][:10]
+        tags_str = f" [{r['tags']}]" if r["tags"] else ""
+        print(f"- [ID: {r['id']}] ({date_str}) [{r['project']}]{tags_str} {r['title']} (status: {r['status']})")
+
+
+def cmd_show(args: argparse.Namespace) -> None:
+    conn = get_connection()
+    cursor = conn.execute(
+        "SELECT id, created_at, project, title, details, tags, status FROM logs WHERE id = ?",
+        (args.id,),
+    )
+    row = cursor.fetchone()
+    if not row:
+        print(f"Memory with ID {args.id} not found.", file=sys.stderr)
+        sys.exit(1)
+
+    r = dict(row)
+    if args.format == "json":
+        print(json.dumps(r, ensure_ascii=False, indent=2))
+        return
+
+    print(f"# Memory Entry [ID: {r['id']}]")
+    print(f"- **Created At**: {r['created_at']}")
+    print(f"- **Project**: {r['project']}")
+    print(f"- **Status**: {r['status']}")
+    print(f"- **Tags**: {r['tags']}")
+    print(f"- **Title**: {r['title']}")
+    print("\n## Details\n")
+    print(r["details"] if r["details"] else "(No details provided)")
+
+
+def cmd_init_docs(args: argparse.Namespace) -> None:
+    docs_dir = get_docs_path()
+    tips_dir = docs_dir / "tips"
+    decisions_dir = docs_dir / "decisions"
+
+    tips_dir.mkdir(parents=True, exist_ok=True)
+    decisions_dir.mkdir(parents=True, exist_ok=True)
+
+    readme_path = docs_dir / "README.md"
+    if not readme_path.exists():
+        readme_path.write_text(
+            "# Cross-Project Shared Knowledge Base\n\n"
+            "This directory contains curated markdown knowledge, tips, and architectural decisions "
+            "shared across projects.\n\n"
+            "- `tips/`: Tool-specific bug workarounds, tips, and configuration snippets.\n"
+            "- `decisions/`: Cross-project design decisions and architectural notes.\n",
+            encoding="utf-8",
+        )
+
+    sample_tip = tips_dir / "sample-tool-tips.md"
+    if not sample_tip.exists():
+        sample_tip.write_text(
+            "# Sample Tool Tips & Workarounds\n\n"
+            "## Summary\n"
+            "Quick notes on common tool quirks and solutions.\n\n"
+            "## Known Issues & Fixes\n"
+            "- **Issue**: Example error message or bug.\n"
+            "  - **Fix**: Description of how to resolve it.\n",
+            encoding="utf-8",
+        )
+
+    print(f"Initialized knowledge base at: {docs_dir}")
+    print(f"- {tips_dir}")
+    print(f"- {decisions_dir}")
+    print(f"- {readme_path}")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="agent-memory: Cross-project memory and knowledge CLI for AI agents & humans."
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # record
+    p_record = subparsers.add_parser("record", help="Record a new memory/execution log.")
+    p_record.add_argument("--project", "-p", default="global", help="Project name (e.g. dotfiles, my-web-app).")
+    p_record.add_argument("--title", "-t", required=True, help="Short title / summary.")
+    p_record.add_argument("--details", "-d", help="Detailed content (or pass via stdin).")
+    p_record.add_argument("--tags", help="Comma-separated tags (e.g. nvim,build,error).")
+    p_record.add_argument(
+        "--status",
+        choices=["info", "success", "failed", "warning"],
+        default="info",
+        help="Execution status (default: info).",
+    )
+    p_record.set_defaults(func=cmd_record)
+
+    # search
+    p_search = subparsers.add_parser("search", help="Search memory records.")
+    p_search.add_argument("query", nargs="?", default="", help="Search keywords.")
+    p_search.add_argument("--project", "-p", help="Filter by project name.")
+    p_search.add_argument("--tags", help="Filter by tag (comma-separated).")
+    p_search.add_argument("--limit", "-n", type=int, default=5, help="Max results to return (default: 5).")
+    p_search.add_argument("--format", "-f", choices=["markdown", "json"], default="markdown", help="Output format.")
+    p_search.set_defaults(func=cmd_search)
+
+    # show
+    p_show = subparsers.add_parser("show", help="Show full details of a specific memory record.")
+    p_show.add_argument("id", type=int, help="Memory record ID.")
+    p_show.add_argument("--format", "-f", choices=["markdown", "json"], default="markdown", help="Output format.")
+    p_show.set_defaults(func=cmd_show)
+
+    # init-docs
+    p_init = subparsers.add_parser("init-docs", help="Initialize Markdown knowledge base directories.")
+    p_init.set_defaults(func=cmd_init_docs)
+
+    args = parser.parse_args()
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()
