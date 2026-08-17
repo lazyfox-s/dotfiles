@@ -45,6 +45,11 @@ sh -c "$(curl -fsLS get.chezmoi.io/lb)" -- init --apply lazyfox-s
 
 ---
 
+## 📁 Optional Directories
+
+- `~/.local/share/agent-memory`: AIエージェントがナレッジやログを記録/参照するためのディレクトリ
+- `~/Documents/howm`: Obsidian の Vault (`Obsidian.nvim` で使用)
+
 ## 📜 Commit Guidelines
 
 ```text
