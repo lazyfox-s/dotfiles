@@ -24,6 +24,22 @@ M.config = function()
     local cmp = require('cmp')
     local lspkind = require('lspkind')
 
+    local default_sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+        { name = 'nvim_lsp_signature_help' },
+        { name = 'vsnip' },
+        { name = 'path' },
+        { name = 'emoji' },
+        { name = 'calc' },
+        { name = 'copilot' },
+    }, {
+        { name = 'buffer' }
+    })
+
+    local skkeleton_sources = cmp.config.sources({
+        { name = 'skkeleton' }
+    })
+
     cmp.setup({
         snippet = {
             expand = function(args)
@@ -43,18 +59,7 @@ M.config = function()
             ['<C-p>'] = cmp.mapping.select_prev_item(),
             ['<CR>'] = cmp.mapping.confirm({ select = false })
         }),
-        sources = cmp.config.sources({
-            { name = 'nvim_lsp' },
-            { name = 'nvim_lsp_signature_help' },
-            { name = 'skkeleton' },
-            { name = 'vsnip' },
-            { name = 'path' },
-            { name = 'emoji' },
-            { name = 'calc' },
-            { name = 'copilot' },
-        }, {
-            { name = 'buffer' }
-        }),
+        sources = default_sources,
         formatting = {
             format = lspkind.cmp_format({
                 mode = 'symbol_text',
@@ -65,6 +70,22 @@ M.config = function()
         experimental = {
             ghost_text = true
         }
+    })
+
+    local group = vim.api.nvim_create_augroup('skkeleton_cmp_source_toggle', { clear = true })
+    vim.api.nvim_create_autocmd('User', {
+        pattern = 'skkeleton-enable-pre',
+        group = group,
+        callback = function()
+            cmp.setup.buffer({ sources = skkeleton_sources })
+        end,
+    })
+    vim.api.nvim_create_autocmd('User', {
+        pattern = 'skkeleton-disable-pre',
+        group = group,
+        callback = function()
+            cmp.setup.buffer({ sources = default_sources })
+        end,
     })
 
     cmp.setup.cmdline({ '/', '?' }, {
