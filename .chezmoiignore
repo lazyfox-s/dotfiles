@@ -3,3 +3,7 @@ docker-compose.yml
 Brewfile
 Brewfile.lock.json
 scoop.json
+AGENTS.md
+COMMIT_CONVENTION.md
+README.md
+entrypoint.sh
