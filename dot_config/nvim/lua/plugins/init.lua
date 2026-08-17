@@ -69,17 +69,24 @@ return {
         config = require('plugins.indent_blankline').config
     },
     {
-        "tversteeg/registers.nvim",
-        name = "registers",
+        "folke/which-key.nvim",
         keys = {
-            { "\"",    mode = { "n", "v" } },
-            { "<C-R>", mode = "i" }
+            { '"', mode = { "n", "v" } },
+            { "<C-r>", mode = { "i", "c" } },
+            { "'", mode = { "n", "v" } },
+            { "`", mode = { "n", "v" } },
         },
-        cmd = "Registers",
-        opts = { window = {
-            border = 'single',
-            transparency = 20
-        }}
+        cmd = "WhichKey",
+        opts = {
+            preset = "modern",
+            triggers = {},
+            plugins = {
+                marks = true,
+                registers = true,
+                spelling = false,
+                presets = false,
+            },
+        },
     },
     {
         'rcarriga/nvim-notify',
