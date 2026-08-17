@@ -43,6 +43,9 @@ ENV HOMEBREW_NO_AUTO_UPDATE=1
 COPY Brewfile /home/${USERNAME}
 RUN brew bundle
 
+COPY dot_tool-versions /home/${USERNAME}/.tool-versions
+RUN mise install
+
 RUN sh -c "$(curl -fsLS get.chezmoi.io/lb)"
 ENV PATH=$PATH:/home/${USERNAME}/.local/bin
 
