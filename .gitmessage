@@ -1,0 +1,21 @@
+
+
+# --------------------------------------------------
+# Format: <emoji> <type>(<scope>): <subject>
+# Example: ✨ add(nvim): flash.nvim を導入
+# --------------------------------------------------
+# Type, Emoji & Gitmoji コード一覧:
+#   ✨ :sparkles:  add      : プラグイン、新設定、キーマップ等の追加
+#   🔧 :wrench:    change   : 既存の設定値・オプションの変更
+#   🔥 :fire:      remove   : 不要になった設定、プラグインの削除
+#   🐛 :bug:       fix      : エラーの解消、壊れた設定の修正
+#   ⚡️ :zap:       perf     : 起動高速化、遅延読み込み等の改善
+#   🎨 :art:       style    : カラースキーム、フォント等の外見
+#   ♻️ :recycle:   refactor : 設定ファイルの分割・モジュール化
+#   ⬆️ :arrow_up:  update   : バージョン・Lockファイルの更新
+#   📦 :package:   setup    : chezmoi設定、インストールスクリプト
+#   📝 :memo:      docs     : READMEやドキュメント類の修正
+#
+# 主な Scope:
+#   nvim, fish, starship, zellij, kitty, chezmoi, brew, os
+# --------------------------------------------------

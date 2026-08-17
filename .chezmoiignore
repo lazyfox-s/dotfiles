@@ -7,3 +7,5 @@ AGENTS.md
 COMMIT_CONVENTION.md
 README.md
 entrypoint.sh
+.lazygit.yml
+.gitmessage
