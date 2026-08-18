@@ -55,4 +55,22 @@ function lk
     set loc (walk --icons --fuzzy $argv); and cd $loc;
 end
 
-zoxide init fish | source
+type -q zoxide; and zoxide init fish | source
+
+# cdh ($dirprev) persistence
+set -g __dirprev_file ~/.local/share/fish/dirprev_history
+
+if status is-interactive; and test -f $__dirprev_file
+    set -g dirprev (cat $__dirprev_file)
+end
+
+function __persist_dirprev --on-variable PWD --description 'Persist dirprev for cdh'
+    status is-command-substitution; and return
+    test -z "$fish_private_mode"; or return
+
+    test -d (dirname $__dirprev_file); or mkdir -p (dirname $__dirprev_file)
+    if test -n "$PWD"
+        # dirprev と現在の PWD を合わせて保存（直近の作業ディレクトリも次回 cdh に含める）
+        string join \n $dirprev $PWD | tail -n 25 > $__dirprev_file
+    end
+end
