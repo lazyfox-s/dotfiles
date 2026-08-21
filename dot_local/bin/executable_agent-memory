@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-agent-memory: Project-crossing memory and knowledge management CLI for AI agents & humans.
+agent-memory: Cross-project memory and knowledge management CLI for AI agents & humans.
 """
 
 import argparse
@@ -9,32 +9,78 @@ import json
 import os
 import pathlib
 import sqlite3
+import subprocess
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
-# Default paths
+# ---------------------------------------------------------------------------
+# Constants
+# ---------------------------------------------------------------------------
 DEFAULT_BASE_DIR = pathlib.Path.home() / ".local" / "share" / "agent-memory"
-DEFAULT_DB_PATH = DEFAULT_BASE_DIR / "memory.db"
-DEFAULT_DOCS_PATH = DEFAULT_BASE_DIR / "docs"
+
+DEFAULT_EXCLUDE_PREFIXES = [
+    "ls", "pwd", "which", "type", "true", "false",
+]
+
+MAX_TITLE_LENGTH = 120
+
+
+# ---------------------------------------------------------------------------
+# Path & Config helpers
+# ---------------------------------------------------------------------------
+def get_base_dir() -> pathlib.Path:
+    env = os.environ.get("AGENT_MEMORY_DIR")
+    if env:
+        return pathlib.Path(env).expanduser().resolve()
+    return DEFAULT_BASE_DIR
 
 
 def get_db_path() -> pathlib.Path:
-    env_path = os.environ.get("AGENT_MEMORY_DB")
-    if env_path:
-        return pathlib.Path(env_path).expanduser().resolve()
-    return DEFAULT_DB_PATH
+    env = os.environ.get("AGENT_MEMORY_DB")
+    if env:
+        return pathlib.Path(env).expanduser().resolve()
+    return get_base_dir() / "memory.db"
 
 
 def get_docs_path() -> pathlib.Path:
-    env_path = os.environ.get("AGENT_MEMORY_DOCS")
-    if env_path:
-        return pathlib.Path(env_path).expanduser().resolve()
-    return DEFAULT_DOCS_PATH
+    env = os.environ.get("AGENT_MEMORY_DOCS")
+    if env:
+        return pathlib.Path(env).expanduser().resolve()
+    return get_base_dir() / "docs"
 
 
+def get_exclude_prefixes() -> List[str]:
+    """Load exclusion list: env var > config.json > defaults."""
+    env = os.environ.get("AGENT_MEMORY_EXCLUDE")
+    if env:
+        return [p.strip() for p in env.split(",") if p.strip()]
+
+    config_path = get_base_dir() / "config.json"
+    if config_path.exists():
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                config = json.load(f)
+            return config.get("exclude_prefixes", DEFAULT_EXCLUDE_PREFIXES)
+        except (json.JSONDecodeError, IOError):
+            pass
+
+    return list(DEFAULT_EXCLUDE_PREFIXES)
+
+
+def is_excluded(command_str: str, exclude_prefixes: List[str]) -> bool:
+    """Check if a command should be excluded from recording."""
+    cmd_name = command_str.strip().split()[0] if command_str.strip() else ""
+    cmd_basename = os.path.basename(cmd_name)
+    return cmd_basename in exclude_prefixes
+
+
+# ---------------------------------------------------------------------------
+# Database
+# ---------------------------------------------------------------------------
 def init_db(conn: sqlite3.Connection) -> None:
-    """Initialize database tables, indexes, and FTS5 virtual table."""
+    """Initialize/migrate database schema."""
     with conn:
+        # Create main table (original columns)
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS logs (
@@ -51,7 +97,25 @@ def init_db(conn: sqlite3.Connection) -> None:
         conn.execute("CREATE INDEX IF NOT EXISTS idx_logs_project ON logs(project);")
         conn.execute("CREATE INDEX IF NOT EXISTS idx_logs_created_at ON logs(created_at);")
 
-        # FTS5 for full-text search
+        # Migrate: add new columns to existing tables
+        cursor = conn.execute("PRAGMA table_info(logs)")
+        existing_cols = {row[1] for row in cursor.fetchall()}
+        new_columns = {
+            "command": "TEXT",
+            "output": "TEXT",
+            "exit_code": "INTEGER",
+            "reasoning": "TEXT",
+        }
+        for col, col_type in new_columns.items():
+            if col not in existing_cols:
+                conn.execute(f"ALTER TABLE logs ADD COLUMN {col} {col_type}")
+
+        # Rebuild FTS5 index (drop + recreate to ensure schema matches)
+        conn.execute("DROP TRIGGER IF EXISTS logs_ai")
+        conn.execute("DROP TRIGGER IF EXISTS logs_ad")
+        conn.execute("DROP TRIGGER IF EXISTS logs_au")
+        conn.execute("DROP TABLE IF EXISTS logs_fts")
+
         conn.execute(
             """
             CREATE VIRTUAL TABLE IF NOT EXISTS logs_fts USING fts5(
@@ -59,35 +123,57 @@ def init_db(conn: sqlite3.Connection) -> None:
                 details,
                 tags,
                 project,
+                command,
+                reasoning,
                 content='logs',
                 content_rowid='id'
             );
             """
         )
+
+        # Repopulate FTS from existing data
+        conn.execute(
+            """
+            INSERT INTO logs_fts(rowid, title, details, tags, project, command, reasoning)
+            SELECT id,
+                   coalesce(title, ''),
+                   coalesce(details, ''),
+                   coalesce(tags, ''),
+                   coalesce(project, ''),
+                   coalesce(command, ''),
+                   coalesce(reasoning, '')
+            FROM logs
+            """
+        )
+
         # Triggers to keep FTS index synced
         conn.execute(
             """
             CREATE TRIGGER IF NOT EXISTS logs_ai AFTER INSERT ON logs BEGIN
-                INSERT INTO logs_fts(rowid, title, details, tags, project)
-                VALUES (new.id, new.title, coalesce(new.details, ''), coalesce(new.tags, ''), new.project);
+                INSERT INTO logs_fts(rowid, title, details, tags, project, command, reasoning)
+                VALUES (new.id, new.title, coalesce(new.details, ''), coalesce(new.tags, ''),
+                        new.project, coalesce(new.command, ''), coalesce(new.reasoning, ''));
             END;
             """
         )
         conn.execute(
             """
             CREATE TRIGGER IF NOT EXISTS logs_ad AFTER DELETE ON logs BEGIN
-                INSERT INTO logs_fts(logs_fts, rowid, title, details, tags, project)
-                VALUES('delete', old.id, old.title, coalesce(old.details, ''), coalesce(old.tags, ''), old.project);
+                INSERT INTO logs_fts(logs_fts, rowid, title, details, tags, project, command, reasoning)
+                VALUES('delete', old.id, old.title, coalesce(old.details, ''), coalesce(old.tags, ''),
+                       old.project, coalesce(old.command, ''), coalesce(old.reasoning, ''));
             END;
             """
         )
         conn.execute(
             """
             CREATE TRIGGER IF NOT EXISTS logs_au AFTER UPDATE ON logs BEGIN
-                INSERT INTO logs_fts(logs_fts, rowid, title, details, tags, project)
-                VALUES('delete', old.id, old.title, coalesce(old.details, ''), coalesce(old.tags, ''), old.project);
-                INSERT INTO logs_fts(rowid, title, details, tags, project)
-                VALUES (new.id, new.title, coalesce(new.details, ''), coalesce(new.tags, ''), new.project);
+                INSERT INTO logs_fts(logs_fts, rowid, title, details, tags, project, command, reasoning)
+                VALUES('delete', old.id, old.title, coalesce(old.details, ''), coalesce(old.tags, ''),
+                       old.project, coalesce(old.command, ''), coalesce(old.reasoning, ''));
+                INSERT INTO logs_fts(rowid, title, details, tags, project, command, reasoning)
+                VALUES (new.id, new.title, coalesce(new.details, ''), coalesce(new.tags, ''),
+                        new.project, coalesce(new.command, ''), coalesce(new.reasoning, ''));
             END;
             """
         )
@@ -102,6 +188,9 @@ def get_connection() -> sqlite3.Connection:
     return conn
 
 
+# ---------------------------------------------------------------------------
+# Commands
+# ---------------------------------------------------------------------------
 def cmd_record(args: argparse.Namespace) -> None:
     details = args.details
     if not details and not sys.stdin.isatty():
@@ -112,19 +201,99 @@ def cmd_record(args: argparse.Namespace) -> None:
     title = args.title.strip()
     tags = args.tags.strip() if args.tags else ""
     status = args.status.strip() if args.status else "info"
+    command = args.cmd.strip() if args.cmd else None
+    reasoning = args.reasoning.strip() if args.reasoning else None
 
     conn = get_connection()
     with conn:
         cursor = conn.execute(
             """
-            INSERT INTO logs (created_at, project, title, details, tags, status)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO logs (created_at, project, title, details, tags, status, command, reasoning)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (created_at, project, title, details, tags, status),
+            (created_at, project, title, details, tags, status, command, reasoning),
         )
         record_id = cursor.lastrowid
 
     print(f"Recorded memory [ID: {record_id}] for project '{project}' (status: {status})")
+
+
+def cmd_exec(args: argparse.Namespace) -> None:
+    """Execute a command, capture output, and record to database."""
+    if not args.command_args:
+        print("Error: No command specified. Use: agent-memory exec -- <command>", file=sys.stderr)
+        sys.exit(1)
+
+    command_str = " ".join(args.command_args)
+    project = args.project.strip() if args.project else "global"
+    reasoning = args.reasoning.strip() if args.reasoning else None
+    tags = args.tags.strip() if args.tags else ""
+
+    # Check exclusion
+    exclude_prefixes = get_exclude_prefixes()
+    no_record = args.no_record or is_excluded(command_str, exclude_prefixes)
+
+    # Execute the command
+    try:
+        result = subprocess.run(
+            command_str,
+            shell=True,
+            capture_output=True,
+            text=True,
+        )
+        stdout = result.stdout
+        stderr = result.stderr
+        exit_code = result.returncode
+    except Exception as e:
+        stdout = ""
+        stderr = str(e)
+        exit_code = 127
+
+    # Output to terminal (so the calling agent/user can see it)
+    if stdout:
+        sys.stdout.write(stdout)
+        if not stdout.endswith("\n"):
+            sys.stdout.write("\n")
+    if stderr:
+        sys.stderr.write(stderr)
+        if not stderr.endswith("\n"):
+            sys.stderr.write("\n")
+
+    # Record to database
+    if not no_record:
+        created_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        status = "success" if exit_code == 0 else "failed"
+
+        # Auto-generate title
+        title = reasoning if reasoning else f"$ {command_str}"
+        if len(title) > MAX_TITLE_LENGTH:
+            title = title[:MAX_TITLE_LENGTH - 3] + "..."
+
+        # Combine stdout and stderr for output field
+        combined_output = ""
+        if stdout:
+            combined_output += stdout
+        if stderr:
+            if combined_output:
+                combined_output += "\n--- stderr ---\n"
+            combined_output += stderr
+
+        conn = get_connection()
+        with conn:
+            cursor = conn.execute(
+                """
+                INSERT INTO logs (created_at, project, title, details, tags, status,
+                                  command, output, exit_code, reasoning)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (created_at, project, title, None, tags, status,
+                 command_str, combined_output, exit_code, reasoning),
+            )
+            record_id = cursor.lastrowid
+
+        print(f"[agent-memory] Recorded [ID: {record_id}] (exit: {exit_code})", file=sys.stderr)
+
+    sys.exit(exit_code)
 
 
 def cmd_search(args: argparse.Namespace) -> None:
@@ -139,14 +308,19 @@ def cmd_search(args: argparse.Namespace) -> None:
             escaped_query = query.replace('"', '""')
             safe_query = f'"{escaped_query}"'
             sql = """
-                SELECT l.id, l.created_at, l.project, l.title, l.details, l.tags, l.status
+                SELECT l.id, l.created_at, l.project, l.title, l.details, l.tags, l.status,
+                       l.command, l.exit_code, l.reasoning
                 FROM logs l
                 JOIN logs_fts f ON l.id = f.rowid
                 WHERE logs_fts MATCH ?
             """
             params: List[Any] = [safe_query]
         else:
-            sql = "SELECT id, created_at, project, title, details, tags, status FROM logs WHERE 1=1"
+            sql = """
+                SELECT id, created_at, project, title, details, tags, status,
+                       command, exit_code, reasoning
+                FROM logs WHERE 1=1
+            """
             params = []
 
         if args.project:
@@ -169,12 +343,14 @@ def cmd_search(args: argparse.Namespace) -> None:
     except sqlite3.OperationalError:
         # Fallback to LIKE if FTS fails
         sql = """
-            SELECT id, created_at, project, title, details, tags, status
+            SELECT id, created_at, project, title, details, tags, status,
+                   command, exit_code, reasoning
             FROM logs
-            WHERE (title LIKE ? OR details LIKE ? OR tags LIKE ? OR project LIKE ?)
+            WHERE (title LIKE ? OR details LIKE ? OR tags LIKE ?
+                   OR project LIKE ? OR command LIKE ? OR reasoning LIKE ?)
         """
         like_pattern = f"%{query}%"
-        params = [like_pattern, like_pattern, like_pattern, like_pattern]
+        params = [like_pattern] * 6
         if args.project:
             sql += " AND project = ?"
             params.append(args.project.strip())
@@ -196,14 +372,26 @@ def cmd_search(args: argparse.Namespace) -> None:
     print(f"Found {len(results)} memory entries:")
     for r in results:
         date_str = r["created_at"][:10]
-        tags_str = f" [{r['tags']}]" if r["tags"] else ""
-        print(f"- [ID: {r['id']}] ({date_str}) [{r['project']}]{tags_str} {r['title']} (status: {r['status']})")
+        tags_str = f" [{r['tags']}]" if r.get("tags") else ""
+
+        if r.get("command"):
+            cmd_display = r["command"]
+            if len(cmd_display) > 80:
+                cmd_display = cmd_display[:77] + "..."
+            label = f"$ {cmd_display}"
+        else:
+            label = r["title"]
+
+        status = r.get("status", "info")
+        print(f"- [ID: {r['id']}] ({date_str}) [{r['project']}]{tags_str} {label} ({status})")
 
 
 def cmd_show(args: argparse.Namespace) -> None:
     conn = get_connection()
     cursor = conn.execute(
-        "SELECT id, created_at, project, title, details, tags, status FROM logs WHERE id = ?",
+        """SELECT id, created_at, project, title, details, tags, status,
+                  command, output, exit_code, reasoning
+           FROM logs WHERE id = ?""",
         (args.id,),
     )
     row = cursor.fetchone()
@@ -220,10 +408,28 @@ def cmd_show(args: argparse.Namespace) -> None:
     print(f"- **Created At**: {r['created_at']}")
     print(f"- **Project**: {r['project']}")
     print(f"- **Status**: {r['status']}")
-    print(f"- **Tags**: {r['tags']}")
+    if r.get("tags"):
+        print(f"- **Tags**: {r['tags']}")
     print(f"- **Title**: {r['title']}")
-    print("\n## Details\n")
-    print(r["details"] if r["details"] else "(No details provided)")
+
+    if r.get("reasoning"):
+        print(f"\n## Reasoning\n")
+        print(r["reasoning"])
+
+    if r.get("command"):
+        print(f"\n## Command\n")
+        print(f"```\n{r['command']}\n```")
+
+    if r.get("exit_code") is not None:
+        print(f"\n- **Exit Code**: {r['exit_code']}")
+
+    if r.get("output"):
+        print(f"\n## Output\n")
+        print(f"```\n{r['output']}\n```")
+
+    if r.get("details"):
+        print(f"\n## Details\n")
+        print(r["details"])
 
 
 def cmd_init_docs(args: argparse.Namespace) -> None:
@@ -263,46 +469,80 @@ def cmd_init_docs(args: argparse.Namespace) -> None:
     print(f"- {readme_path}")
 
 
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="agent-memory: Cross-project memory and knowledge CLI for AI agents & humans."
     )
-    subparsers = parser.add_subparsers(dest="command", required=True)
+    subparsers = parser.add_subparsers(dest="subcommand", required=True)
 
-    # record
+    # --- record ---
     p_record = subparsers.add_parser("record", help="Record a new memory/execution log.")
-    p_record.add_argument("--project", "-p", default="global", help="Project name (e.g. dotfiles, my-web-app).")
+    p_record.add_argument("--project", "-p", default="global", help="Project name.")
     p_record.add_argument("--title", "-t", required=True, help="Short title / summary.")
     p_record.add_argument("--details", "-d", help="Detailed content (or pass via stdin).")
-    p_record.add_argument("--tags", help="Comma-separated tags (e.g. nvim,build,error).")
+    p_record.add_argument("--tags", help="Comma-separated tags.")
+    p_record.add_argument("--cmd", help="Command that was executed (for manual recording).")
+    p_record.add_argument("--reasoning", "-r", help="Reasoning / thought process.")
     p_record.add_argument(
         "--status",
         choices=["info", "success", "failed", "warning"],
         default="info",
-        help="Execution status (default: info).",
+        help="Status (default: info).",
     )
     p_record.set_defaults(func=cmd_record)
 
-    # search
+    # --- exec ---
+    p_exec = subparsers.add_parser(
+        "exec",
+        help="Execute a command, capture & record its output automatically.",
+    )
+    p_exec.add_argument("--project", "-p", default="global", help="Project name.")
+    p_exec.add_argument("--reasoning", "-r", help="Why this command is being run.")
+    p_exec.add_argument("--tags", help="Comma-separated tags.")
+    p_exec.add_argument(
+        "--no-record", action="store_true",
+        help="Skip recording for this invocation.",
+    )
+    p_exec.add_argument(
+        "command_args", nargs=argparse.REMAINDER,
+        help="Command to execute (after --).",
+    )
+    p_exec.set_defaults(func=cmd_exec)
+
+    # --- search ---
     p_search = subparsers.add_parser("search", help="Search memory records.")
     p_search.add_argument("query", nargs="?", default="", help="Search keywords.")
     p_search.add_argument("--project", "-p", help="Filter by project name.")
     p_search.add_argument("--tags", help="Filter by tag (comma-separated).")
-    p_search.add_argument("--limit", "-n", type=int, default=5, help="Max results to return (default: 5).")
-    p_search.add_argument("--format", "-f", choices=["markdown", "json"], default="markdown", help="Output format.")
+    p_search.add_argument("--limit", "-n", type=int, default=5, help="Max results (default: 5).")
+    p_search.add_argument(
+        "--format", "-f", choices=["markdown", "json"], default="markdown",
+        help="Output format.",
+    )
     p_search.set_defaults(func=cmd_search)
 
-    # show
-    p_show = subparsers.add_parser("show", help="Show full details of a specific memory record.")
+    # --- show ---
+    p_show = subparsers.add_parser("show", help="Show full details of a memory record.")
     p_show.add_argument("id", type=int, help="Memory record ID.")
-    p_show.add_argument("--format", "-f", choices=["markdown", "json"], default="markdown", help="Output format.")
+    p_show.add_argument(
+        "--format", "-f", choices=["markdown", "json"], default="markdown",
+        help="Output format.",
+    )
     p_show.set_defaults(func=cmd_show)
 
-    # init-docs
+    # --- init-docs ---
     p_init = subparsers.add_parser("init-docs", help="Initialize Markdown knowledge base directories.")
     p_init.set_defaults(func=cmd_init_docs)
 
     args = parser.parse_args()
+
+    # Strip leading "--" from exec command_args
+    if hasattr(args, "command_args") and args.command_args and args.command_args[0] == "--":
+        args.command_args = args.command_args[1:]
+
     args.func(args)
 
 
