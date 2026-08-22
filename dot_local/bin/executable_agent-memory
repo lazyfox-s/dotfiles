@@ -296,6 +296,12 @@ def cmd_exec(args: argparse.Namespace) -> None:
     sys.exit(exit_code)
 
 
+def cmd_list(args: argparse.Namespace) -> None:
+    """List recent memories by delegating to cmd_search with empty query."""
+    args.query = ""
+    cmd_search(args)
+
+
 def cmd_search(args: argparse.Namespace) -> None:
     conn = get_connection()
     query = args.query.strip() if args.query else ""
@@ -523,6 +529,17 @@ def main() -> None:
         help="Output format.",
     )
     p_search.set_defaults(func=cmd_search)
+
+    # --- list ---
+    p_list = subparsers.add_parser("list", aliases=["ls"], help="List recent memory records.")
+    p_list.add_argument("--project", "-p", help="Filter by project name.")
+    p_list.add_argument("--tags", help="Filter by tag (comma-separated).")
+    p_list.add_argument("--limit", "-n", type=int, default=10, help="Max results (default: 10).")
+    p_list.add_argument(
+        "--format", "-f", choices=["markdown", "json"], default="markdown",
+        help="Output format.",
+    )
+    p_list.set_defaults(func=cmd_list)
 
     # --- show ---
     p_show = subparsers.add_parser("show", help="Show full details of a memory record.")

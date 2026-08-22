@@ -69,11 +69,28 @@ To customize, create `~/.local/share/agent-memory/config.json`:
 
 Or set `AGENT_MEMORY_EXCLUDE` environment variable (comma-separated).
 
----
+## 2. Searching & Listing Past Memory
 
-## 2. Searching Past Memory
+### Listing Recent Memories (`agent-memory list` / `ls`)
+View recent execution logs or records without needing search keywords:
 
-When encountering unfamiliar errors, complex tool behaviors, or past design discussions, search the memory database first:
+```bash
+# List recent 10 records (default)
+agent-memory list
+
+# Or use short alias
+agent-memory ls
+
+# Filter by project or tags, or change limit
+agent-memory list -p <project> -n 20
+agent-memory list --tags "<tag1,tag2>"
+
+# Get structured JSON output
+agent-memory list --format json
+```
+
+### Searching Past Memory (`agent-memory search`)
+When encountering unfamiliar errors, complex tool behaviors, or past design discussions, search the memory database:
 
 ```bash
 # Keyword search (returns concise summary of recent matches)
