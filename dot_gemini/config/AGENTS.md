@@ -23,7 +23,30 @@
 - **push の禁止**: リモートリポジトリへの `git push` は、ユーザーから明示的な指示がない限り自動で実行しないでください。
 
 ## 5. 記憶・ナレッジの共有 (agent-memory)
-- **コマンド実行の記録**: `run_command` によるシェルコマンド実行時は、原則として `agent-memory exec -p <project> -- <command>` を経由して実行してください。除外リスト（`ls`, `pwd` 等の些末なコマンド）に該当するコマンドは自動的に記録がスキップされます。調査・診断目的のコマンドには `--reasoning` オプションで実行意図を付記してください。
-- **過去の知見の検索**: 難解なエラーやツール固有のトラブルシューティング時は、`agent-memory search "<キーワード>"` や `~/.local/share/agent-memory/docs/` を確認してください。
-- **知見の記録**: 有益なトラブルシューティングや検討結果が得られた際は、`agent-memory record`（AI用ログ）または `~/.local/share/agent-memory/docs/tips/`（人間向けナレッジ）への保存を検討してください。
+- **知見の検索・事前確認**:
+  - トラブルシューティング時や設計判断時は、`~/.local/share/agent-memory/docs/` 配下のナレッジ（`tips/`, `investigations/`, `decisions/`）を確認してください。
+- **調査ログ・知見の記録**:
+  - **確定したノウハウ・定石**: `~/.local/share/agent-memory/docs/tips/<tool>.md` に記録・更新してください。
+  - **調査中・未解決課題・試行錯誤の過程**: `~/.local/share/agent-memory/docs/investigations/YYYY-MM-<topic>.md` に記録してください。
+  - **フロントマター規約**: `investigations/` のドキュメントには必ず以下の YAML front-matter を付与してください：
+    ```markdown
+    ---
+    title: <タイトル>
+    status: in_progress # in_progress | blocked | resolved | abandoned
+    created: YYYY-MM-DD
+    modified: YYYY-MM-DD
+    conversation_id: <conversation_id>
+    tags:
+      - <tag1>
+      - <tag2>
+    related_files:
+      - <path/to/file>
+    ---
+    ```
+- **ドキュメント書式（Obsidian 互換）**:
+  - 人間側はナレッジを Obsidian で閲覧するため、標準的な Markdown に加えて以下の記法を適切に活用してください：
+    - **コールアウト（Callouts）**: 重要な注意点や補足、Tips の強調（例: `> [!NOTE]`, `> [!TIP]`, `> [!WARNING]`, `> [!IMPORTANT]` 等）。
+    - **Mermaid ダイアグラム**: 構成図、フローチャート、関係性の可視化（```mermaid ... ```）。
+
+
 
